@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp (name = "PINK Teleop")
 public class Teleop extends OpMode {
-//Test
+
     // Declare OpMode Members
     private Hardware robot = new Hardware();
     private double  leftJoystickBase;
