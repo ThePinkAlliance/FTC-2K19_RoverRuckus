@@ -6,7 +6,7 @@ Android debugging over bluetooth (without root)
 
 2)  Now on the phone enable debugging from Settings -> Developer options -> enable debugging.
 
-3)  Next enable  bluetooth and pair the phone with the laptop. Once paired, unpair the two and on
+3)  Next enable  bluetooth and pair the phone with the laptop. Once paired, un-pair the two and on
     the android device go to Settings -> Tethering and portable hotspot then enable
     "Bluetooth tethering"
 

@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
-@TeleOp (name = "PINK Teleop")
+@TeleOp (name = "Teleop", group = "Teleop")
 public class Teleop extends OpMode {
 
     // Declare OpMode Members
