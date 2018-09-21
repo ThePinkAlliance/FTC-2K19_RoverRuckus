@@ -117,9 +117,6 @@ public class Teleop extends OpMode {
         }
 
         robot.collectorIntake.setPower(towerCollectCmd);
-
-        // TELEMETRY /////////////////////////////////////////////////////
-
     }
 
     // Code to run ONCE after the driver hits STOP
