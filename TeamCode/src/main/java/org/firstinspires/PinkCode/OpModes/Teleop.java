@@ -15,10 +15,12 @@ import org.firstinspires.PinkCode.Subsystems.Lift;
 public class Teleop extends OpMode{
     public Hardware robot = new Hardware();
 
+    // Code to Run Once When the Driver Hits Init
     public void init() {
         robot.init(hardwareMap);
     }
 
+    // Code to Run Constantly While the Program is Running
     public void loop() {
         // Tank Drive Using Base Joystick Commands
         if (Controls.base_right_joystick > 0.1 || Controls.base_right_joystick < -0.1 || Controls.base_left_joystick < -0.1 || Controls.base_left_joystick > 0.1) {
@@ -41,7 +43,7 @@ public class Teleop extends OpMode{
             Lift.lift_by_command(0);
         }
 
-        //Collector Controls Using Base Bumpers.
+        // Collector Controls Using Base Bumpers
         if (Controls.base_right_bumper) {
             Collector.collect();
         } else if (Controls.base_left_bumper){
@@ -51,6 +53,7 @@ public class Teleop extends OpMode{
         }
     }
 
+    // Code to Run Once When the Driver Hits Stop
     public void stop() {
         Base.drive_stop();
         Extender.extend_stop();
@@ -58,6 +61,3 @@ public class Teleop extends OpMode{
         Collector.collect_stop();
     }
 }
-
-
-

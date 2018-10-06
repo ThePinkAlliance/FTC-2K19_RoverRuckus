@@ -1,6 +1,7 @@
 package org.firstinspires.PinkCode.Subsystems;
 
 import org.firstinspires.PinkCode.Robot.Hardware;
+import org.firstinspires.PinkCode.Robot.Presets;
 
 public class Collector {
     public static double collect_cmd;
@@ -8,33 +9,33 @@ public class Collector {
     private static Hardware robot = new Hardware();
 
     public static boolean collect () {
-        collect_cmd = 1;
+        collect_cmd = Presets.COLLECTOR_COLLECT_POWER;
 
-        robot.extend.setPower(collect_cmd);
+        robot.collect.setPower(collect_cmd);
 
         return true;
     }
 
     public static boolean eject () {
-        collect_cmd = -1;
+        collect_cmd = Presets.COLLECTOR_EJECT_POWER;
 
-        robot.extend.setPower(collect_cmd);
+        robot.collect.setPower(collect_cmd);
 
         return true;
     }
 
     public static boolean hold () {
-        collect_cmd = 0;
+        collect_cmd = Presets.COLLECTOR_HOLD_POWER;
 
-        robot.extend.setPower(collect_cmd);
+        robot.collect.setPower(collect_cmd);
 
         return true;
     }
 
     public static boolean collect_stop () {
-        robot.extend.setPower(0);
+        robot.collect.setPower(0);
 
-        return robot.extend.getPower() == 0;
+        return robot.collect.getPower() == 0;
     }
 
 }
