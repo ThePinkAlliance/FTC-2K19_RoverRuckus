@@ -3,39 +3,54 @@ package org.firstinspires.PinkCode.Subsystems;
 import org.firstinspires.PinkCode.Robot.Hardware;
 import org.firstinspires.PinkCode.Robot.Presets;
 
-public class Collector {
-    public static double collect_cmd;
-
+// Abstract Class to Define the Methods of the Collector Subsystem
+public abstract class Collector {
+    // Define Class Members
+    public static double collect_command;
     private static Hardware robot = new Hardware();
 
+    // Method for Collecting
     public static boolean collect () {
-        collect_cmd = Presets.COLLECTOR_COLLECT_POWER;
+        // Define Commands
+        collect_command = Presets.COLLECTOR_COLLECT_POWER;
 
-        robot.collect.setPower(collect_cmd);
+        // Set Motor Power
+        robot.collect.setPower(collect_command);
 
+        // Return Value
         return true;
     }
 
+    // Method for Ejecting
     public static boolean eject () {
-        collect_cmd = Presets.COLLECTOR_EJECT_POWER;
+        // Define Commands
+        collect_command = Presets.COLLECTOR_EJECT_POWER;
 
-        robot.collect.setPower(collect_cmd);
+        // Set Motor Power
+        robot.collect.setPower(collect_command);
 
+        // Return Value
         return true;
     }
 
+    // Default Method for Collector
     public static boolean hold () {
-        collect_cmd = Presets.COLLECTOR_HOLD_POWER;
+        // Define Commands
+        collect_command = Presets.COLLECTOR_HOLD_POWER;
 
-        robot.collect.setPower(collect_cmd);
+        // Set Motor Power
+        robot.collect.setPower(collect_command);
 
+        // Return Value
         return true;
     }
 
+    // Method for Stopping the Collector
     public static boolean collect_stop () {
+        // Set Motor Power
         robot.collect.setPower(0);
 
+        // Return Value
         return robot.collect.getPower() == 0;
     }
-
 }
