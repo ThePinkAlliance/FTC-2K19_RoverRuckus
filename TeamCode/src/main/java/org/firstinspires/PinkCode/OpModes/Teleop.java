@@ -45,12 +45,32 @@ public class Teleop extends OpMode{
             Extender.extend_by_command(Controls.tower_right_joystick);
         } else if (Controls.tower_y) {
             Extender.extend_to_position(Presets.EXTEND_COLLECT_POSITION);
+            if (Extender.extend_to_position(Presets.EXTEND_COLLECT_POSITION)) {
+                telemetry.addData("Extender: ", "Success - Reached Collect Position");
+            } else {
+                telemetry.addData("Extender: ", "Error - Didn't Reach Collect Position");
+            }
         } else if (Controls.tower_b) {
             Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
+            if (Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION)) {
+                telemetry.addData("Extender: ", "Success - Reached Crater Position");
+            } else {
+                telemetry.addData("Extender: ", "Error - Didn't Reach Crater Position");
+            }
         } else if (Controls.tower_a) {
             Extender.extend_to_position(Presets.EXTEND_SORT_POSITION);
+            if (Extender.extend_to_position(Presets.EXTEND_SORT_POSITION)) {
+                telemetry.addData("Extender: ", "Success - Reached Sort Position");
+            } else {
+                telemetry.addData("Extender: ", "Error - Didn't Reach Sort Position");
+            }
         } else {
             Extender.extend_hold();
+            if (Extender.extend_hold()) {
+                telemetry.addData("Extender: ", "Success - Holding Position");
+            } else {
+                telemetry.addData("Extender: ", "Error - Not Holding Position");
+            }
         }
 
         // Lift Controls Using Tower Left Joystick Command and D-Pad
@@ -67,9 +87,40 @@ public class Teleop extends OpMode{
 
     // Code to Run Once When the Driver Hits Stop
     public void stop() {
+        // Clear and Update Telemetry
+        telemetry.clear();
+        telemetry.addData("Subsystem States:", "");
+
+        // Stop Base and Send Error Message if Base Fails to Stop Completely
         Base.drive_stop();
+        if (!Base.drive_stop()) {
+            telemetry.addData("Base: ","Error - Not Stopped");
+        } else {
+            telemetry.addData("Base: ", "Success - Stopped");
+        }
+
+        // Retract Extender and Send Error Message if Extender Fails to Retract Fully
         Extender.extend_stop();
+        if (!Extender.extend_stop()) {
+            telemetry.addData("Extender: ", "Error - Not Retracted");
+        } else {
+            telemetry.addData("Extender: ", "Success - Retracted");
+        }
+
+        // Lower Lift and Send Error Message if Lift Fails to Lower Fully
         Lift.lift_stop();
+        if (!Lift.lift_stop()) {
+            telemetry.addData("Lift: ", "Error - Not Retracted");
+        } else {
+            telemetry.addData("Lift: ", "Success - Retracted");
+        }
+
+        // Stop Collector and Send Error Message if Collector Fails to Stop Completely
         Collector.collect_stop();
+        if (!Collector.collect_stop()) {
+            telemetry.addData("Collector: ", "Error - Not Stopped");
+        } else {
+            telemetry.addData("Collector: ", "Success - Stopped");
+        }
     }
 }

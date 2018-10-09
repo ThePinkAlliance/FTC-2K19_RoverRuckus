@@ -45,6 +45,7 @@ public abstract class Extender {
     // Method for Holding the Extender in Place
     public static boolean extend_hold () {
         // Define Commands
+        extend_error = previous_extend_position - robot.extend.getCurrentPosition();
         extend_speed = robot.extend.getCurrentPosition() - previous_extend_position;
         previous_extend_position = robot.extend.getCurrentPosition();
         extend_command = PD.get_extend_command(0, extend_speed);

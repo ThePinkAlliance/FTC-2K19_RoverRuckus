@@ -1,7 +1,6 @@
 package org.firstinspires.PinkCode.Robot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 // Class to Define the Hardware of the Robot
