@@ -16,10 +16,8 @@ public abstract class Base {
         left_wheel_command = left;
 
         // Set Motor Power
-        robot.right_front_drive.setPower(right_wheel_command);
-        robot.right_back_drive.setPower(right_wheel_command);
-        robot.left_front_drive.setPower(left_wheel_command);
-        robot.left_back_drive.setPower(left_wheel_command);
+        robot.right_drive.setPower(right_wheel_command);
+        robot.left_drive.setPower(left_wheel_command);
 
         // Return Value
         return true;
@@ -28,12 +26,10 @@ public abstract class Base {
     // Method for Stopping the Drive Train
     public static boolean drive_stop() {
         // Set Motor Power
-        robot.right_front_drive.setPower(0);
-        robot.right_back_drive.setPower(0);
-        robot.left_front_drive.setPower(0);
-        robot.left_back_drive.setPower(0);
+        robot.right_drive.setPower(0);
+        robot.left_drive.setPower(0);
 
         // Return Value
-        return robot.right_front_drive.getPower() == 0 && robot.right_back_drive.getPower() == 0 && robot.left_front_drive.getPower() == 0 && robot.left_back_drive.getPower() == 0;
+        return robot.right_drive.getPower() == 0 && robot.left_drive.getPower() == 0;
     }
 }
