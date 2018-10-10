@@ -18,7 +18,7 @@ public abstract class Collector {
         robot.collect.setPower(collect_command);
 
         // Return Value
-        return true;
+        return collect_command == 1;
     }
 
     // Method for Ejecting
@@ -30,7 +30,7 @@ public abstract class Collector {
         robot.collect.setPower(collect_command);
 
         // Return Value
-        return true;
+        return collect_command == -1;
     }
 
     // Default Method for Collector
@@ -42,7 +42,7 @@ public abstract class Collector {
         robot.collect.setPower(collect_command);
 
         // Return Value
-        return true;
+        return collect_command == 0;
     }
 
     // Method for Stopping the Collector

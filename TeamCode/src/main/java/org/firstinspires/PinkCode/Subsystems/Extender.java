@@ -23,7 +23,7 @@ public abstract class Extender {
         robot.extend.setPower(extend_command);
 
         // Return Value
-        return true;
+        return extend_command > 0;
     }
 
     // Method for Extending to a Position

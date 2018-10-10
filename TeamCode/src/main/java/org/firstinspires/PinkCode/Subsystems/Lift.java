@@ -23,7 +23,7 @@ public abstract class Lift {
         robot.lift.setPower(lift_command);
 
         // Return Value
-        return true;
+        return lift_command > 0;
     }
 
     // Method for Controlling the Lift Using Positions
