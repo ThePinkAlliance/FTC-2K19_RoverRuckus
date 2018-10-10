@@ -1,5 +1,7 @@
 package org.firstinspires.PinkCode.Robot;
 
+import org.firstinspires.PinkCode.Subsystems.Base;
+
 // Abstract Class to Define Preset Values Used Throughout Subsystems
 public abstract class Presets {
     // Collector Presets TODO: Confirm Collector Presets
@@ -16,6 +18,8 @@ public abstract class Presets {
     public static final double EXTEND_COLLECT_POSITION = 100; // Position for Collecting From Crater
     public static final double EXTEND_CRATER_POSITION = 80; // Position Barely Outside Crater Plane
     public static final double EXTEND_SORT_POSITION = 0; // Retracted Position for Transfer to Lift
+    public static final double EXTEND_GOLD_POSITION = 75;
+    public static final double EXTEND_MID_GOLD_POSITION = 80;
 
     // Lift Presets TODO: Confirm Lift Presets
     public static final double LIFT_Kp = 0; // Kp for Lift PD
