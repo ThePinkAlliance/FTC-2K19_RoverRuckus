@@ -27,22 +27,52 @@ public class Teleop extends OpMode{
         // Tank Drive Using Base Joystick Commands
         if (Controls.base_right_joystick > 0.1 || Controls.base_right_joystick < -0.1 || Controls.base_left_joystick < -0.1 || Controls.base_left_joystick > 0.1) {
             Base.drive_by_command(Controls.base_right_joystick, Controls.base_left_joystick);
+            if (Base.drive_by_command(Controls.base_right_joystick, Controls.base_left_joystick)) {
+                telemetry.addData("Base: ", "Success - Driving by Joysticks");
+            } else {
+                telemetry.addData("Base: ", "Error - Not Driving");
+            }
         } else {
             Base.drive_by_command(0, 0);
+            if (Base.drive_by_command(0,0)) {
+                telemetry.addData("Base: ", "Stopped");
+            } else {
+                telemetry.addData("Base: ", "Not Stopped");
+            }
         }
 
         // Collector Controls Using Base Bumpers
         if (Controls.base_right_bumper) {
             Collector.collect();
+            if (Collector.collect()) {
+                telemetry.addData("Collector: ", "Success - Collecting");
+            } else {
+                telemetry.addData("Collector: ", "Error - Failed to Collect");
+            }
         } else if (Controls.base_left_bumper){
             Collector.eject();
+            if (Collector.eject()) {
+                telemetry.addData("Collector: ", "Success - Ejecting");
+            } else {
+                telemetry.addData("Collector: ", " Error - Failed to Eject");
+            }
         } else {
             Collector.hold();
+            if (Collector.hold()) {
+                telemetry.addData("Collector: ", "Holding Position");
+            } else {
+                telemetry.addData("Collector: ", "Not Holding Position");
+            }
         }
 
         // Extender Controls Using Tower Right Joystick Command and Tower Buttons
         if (Controls.tower_right_joystick > 0.1 || Controls.tower_right_joystick < -0.1) {
             Extender.extend_by_command(Controls.tower_right_joystick);
+            if (Extender.extend_by_command(Controls.tower_right_joystick)) {
+                telemetry.addData("Extender: ", "Driving Using Joystick");
+            } else {
+                telemetry.addData("Extender: ", "Stopped");
+            }
         } else if (Controls.tower_y) {
             Extender.extend_to_position(Presets.EXTEND_COLLECT_POSITION);
             if (Extender.extend_to_position(Presets.EXTEND_COLLECT_POSITION)) {
@@ -67,21 +97,41 @@ public class Teleop extends OpMode{
         } else {
             Extender.extend_hold();
             if (Extender.extend_hold()) {
-                telemetry.addData("Extender: ", "Success - Holding Position");
+                telemetry.addData("Extender: ", "Holding Position");
             } else {
-                telemetry.addData("Extender: ", "Error - Not Holding Position");
+                telemetry.addData("Extender: ", "Not Holding Position");
             }
         }
 
         // Lift Controls Using Tower Left Joystick Command and D-Pad
         if (Controls.tower_left_joystick > 0.1 || Controls.tower_left_joystick < -0.1) {
             Lift.lift_by_command(Controls.tower_left_joystick);
+            if (Lift.lift_by_command(Controls.tower_left_joystick)) {
+                telemetry.addData("Lift: ", "Driving Using Joystick");
+            } else {
+                telemetry.addData("Lift: ", "Stopped");
+            }
         } else if (Controls.tower_dpad_up) {
             Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
+            if (Lift.lift_to_position(Presets.LIFT_SCORE_POSITION)) {
+                telemetry.addData("Lift: ", "Success - Reached Score Position");
+            } else {
+                telemetry.addData("Lift: ", "Error - Didn't Reach Score Position");
+            }
         } else if (Controls.tower_dpad_down) {
             Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
+            if (Lift.lift_to_position(Presets.LIFT_SORT_POSITION)) {
+                telemetry.addData("Lift: ", "Success - Reached Collapsed Position");
+            } else {
+                telemetry.addData("Lift: ", "Error - Didn't Reach Collapse Position");
+            }
         } else {
             Lift.lift_hold();
+            if (Lift.lift_hold()) {
+                telemetry.addData("Lift: ", "Holding Position");
+            } else {
+                telemetry.addData("Lift: ", "Not Holding Position");
+            }
         }
     }
 
