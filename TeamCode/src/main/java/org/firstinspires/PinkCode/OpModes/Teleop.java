@@ -14,20 +14,20 @@ import org.firstinspires.PinkCode.Subsystems.Lift;
 // Class for Player-Controlled Period of the Game Which Binds Controls to Subsystems
 @TeleOp(name = "Teleop", group = "Teleop")
 public class Teleop extends OpMode{
-    // Define OpMode Members
-    public Hardware robot = new Hardware();
-
     // Code to Run Once When the Driver Hits Init
     public void init() {
-        robot.init(hardwareMap);
+        Base.robot.init(hardwareMap);
+        Collector.robot.init(hardwareMap);
+        Extender.robot.init(hardwareMap);
+        Lift.robot.init(hardwareMap);
     }
 
     // Code to Run Constantly While the Program is Running
     public void loop() {
-        // Tank Drive Using Base Joystick Commands
-        if (Controls.base_right_joystick > 0.1 || Controls.base_right_joystick < -0.1 || Controls.base_left_joystick < -0.1 || Controls.base_left_joystick > 0.1) {
-            Base.drive_by_command(Controls.base_right_joystick, Controls.base_left_joystick);
-            if (Base.drive_by_command(Controls.base_right_joystick, Controls.base_left_joystick)) {
+       // Tank Drive Using Base Joystick Commands
+        if (gamepad1.right_stick_y > 0.1 || gamepad1.right_stick_y < -0.1 || gamepad1.left_stick_y < -0.1 || gamepad1.left_stick_y > 0.1) {
+            Base.drive_by_command(gamepad1.right_stick_y, gamepad1.left_stick_y);
+            if (Base.drive_by_command(gamepad1.right_stick_y, gamepad1.left_stick_y)) {
                 telemetry.addData("Base: ", "Success - Driving by Joysticks");
             } else {
                 telemetry.addData("Base: ", "Error - Not Driving");
@@ -42,14 +42,14 @@ public class Teleop extends OpMode{
         }
 
         // Collector Controls Using Base Bumpers
-        if (Controls.base_right_bumper) {
+        if (gamepad1.right_bumper) {
             Collector.collect();
             if (Collector.collect()) {
                 telemetry.addData("Collector: ", "Success - Collecting");
             } else {
                 telemetry.addData("Collector: ", "Error - Failed to Collect");
             }
-        } else if (Controls.base_left_bumper){
+        } else if (gamepad1.left_bumper){
             Collector.eject();
             if (Collector.eject()) {
                 telemetry.addData("Collector: ", "Success - Ejecting");
@@ -66,28 +66,28 @@ public class Teleop extends OpMode{
         }
 
         // Extender Controls Using Tower Right Joystick Command and Tower Buttons
-        if (Controls.tower_right_joystick > 0.1 || Controls.tower_right_joystick < -0.1) {
-            Extender.extend_by_command(Controls.tower_right_joystick);
-            if (Extender.extend_by_command(Controls.tower_right_joystick)) {
+        if (gamepad2.right_stick_y > 0.1 || gamepad2.right_stick_y < -0.1) {
+            Extender.extend_by_command(gamepad2.right_stick_y);
+            if (Extender.extend_by_command(gamepad2.right_stick_y)) {
                 telemetry.addData("Extender: ", "Driving Using Joystick");
             } else {
                 telemetry.addData("Extender: ", "Stopped");
             }
-        } else if (Controls.tower_y) {
+        } else if (gamepad2.y) {
             Extender.extend_to_position(Presets.EXTEND_COLLECT_POSITION);
             if (Extender.extend_to_position(Presets.EXTEND_COLLECT_POSITION)) {
                 telemetry.addData("Extender: ", "Success - Reached Collect Position");
             } else {
                 telemetry.addData("Extender: ", "Error - Didn't Reach Collect Position");
             }
-        } else if (Controls.tower_b) {
+        } else if (gamepad2.b) {
             Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
             if (Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION)) {
                 telemetry.addData("Extender: ", "Success - Reached Crater Position");
             } else {
                 telemetry.addData("Extender: ", "Error - Didn't Reach Crater Position");
             }
-        } else if (Controls.tower_a) {
+        } else if (gamepad2.a) {
             Extender.extend_to_position(Presets.EXTEND_SORT_POSITION);
             if (Extender.extend_to_position(Presets.EXTEND_SORT_POSITION)) {
                 telemetry.addData("Extender: ", "Success - Reached Sort Position");
@@ -104,21 +104,21 @@ public class Teleop extends OpMode{
         }
 
         // Lift Controls Using Tower Left Joystick Command and D-Pad
-        if (Controls.tower_left_joystick > 0.1 || Controls.tower_left_joystick < -0.1) {
-            Lift.lift_by_command(Controls.tower_left_joystick);
-            if (Lift.lift_by_command(Controls.tower_left_joystick)) {
+        if (gamepad2.left_stick_y > 0.1 || gamepad2.left_stick_y < -0.1) {
+            Lift.lift_by_command(gamepad2.left_stick_y);
+            if (Lift.lift_by_command(gamepad2.left_stick_y)) {
                 telemetry.addData("Lift: ", "Driving Using Joystick");
             } else {
                 telemetry.addData("Lift: ", "Stopped");
             }
-        } else if (Controls.tower_dpad_up) {
+        } else if (gamepad2.dpad_up) {
             Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
             if (Lift.lift_to_position(Presets.LIFT_SCORE_POSITION)) {
                 telemetry.addData("Lift: ", "Success - Reached Score Position");
             } else {
                 telemetry.addData("Lift: ", "Error - Didn't Reach Score Position");
             }
-        } else if (Controls.tower_dpad_down) {
+        } else if (gamepad2.dpad_down) {
             Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
             if (Lift.lift_to_position(Presets.LIFT_SORT_POSITION)) {
                 telemetry.addData("Lift: ", "Success - Reached Collapsed Position");
@@ -133,6 +133,7 @@ public class Teleop extends OpMode{
                 telemetry.addData("Lift: ", "Not Holding Position");
             }
         }
+        telemetry.update();
     }
 
     // Code to Run Once When the Driver Hits Stop
@@ -172,5 +173,7 @@ public class Teleop extends OpMode{
         } else {
             telemetry.addData("Collector: ", "Success - Stopped");
         }
+
+        telemetry.update();
     }
 }

@@ -12,7 +12,7 @@ public abstract class Lift {
     public static double lift_error;
     public static double lift_speed;
     public static double previous_lift_position;
-    private static Hardware robot = new Hardware();
+    public static Hardware robot = new Hardware();
 
     // Method for Raising/Lowering the Lift Using Commands
     public static boolean lift_by_command (double command) {
@@ -20,7 +20,8 @@ public abstract class Lift {
         lift_command = command;
 
         // Set Motor Power
-        robot.lift.setPower(lift_command);
+        robot.right_lift.setPower(lift_command);
+        robot.left_lift.setPower(lift_command);
 
         // Return Value
         return lift_command > 0;
@@ -30,13 +31,14 @@ public abstract class Lift {
     public static boolean lift_to_position (double position) {
         // Define Commands
         lift_target_position = position;
-        lift_error = lift_target_position - robot.lift.getCurrentPosition();
-        lift_speed = robot.lift.getCurrentPosition() - previous_lift_position;
-        previous_lift_position = robot.lift.getCurrentPosition();
+        lift_error = lift_target_position - ((robot.right_lift.getCurrentPosition() + robot.left_lift.getCurrentPosition())/2);
+        lift_speed = ((robot.right_lift.getCurrentPosition() + robot.left_lift.getCurrentPosition())/2) - previous_lift_position;
+        previous_lift_position = ((robot.right_lift.getCurrentPosition() + robot.left_lift.getCurrentPosition())/2);
         lift_command = PD.get_lift_command(lift_error, lift_speed);
 
         // Set Motor Power
-        robot.lift.setPower(lift_command);
+        robot.right_lift.setPower(lift_command);
+        robot.left_lift.setPower(lift_command);
 
         // Return Value
         return (Math.abs(lift_error) < Presets.LIFT_POSITION_THRESHOLD);
@@ -45,12 +47,13 @@ public abstract class Lift {
     // Method for Holding the Lift in Place
     public static boolean lift_hold () {
         // Define Commands
-        lift_speed = robot.lift.getCurrentPosition() - previous_lift_position;
-        previous_lift_position = robot.lift.getCurrentPosition();
+        lift_speed = ((robot.right_lift.getCurrentPosition() + robot.left_lift.getCurrentPosition())/2) - previous_lift_position;
+        previous_lift_position = ((robot.right_lift.getCurrentPosition() + robot.left_lift.getCurrentPosition())/2);
         lift_command = PD.get_lift_command(0, lift_speed);
 
         // Set Motor Command
-        robot.lift.setPower(lift_command);
+        robot.right_lift.setPower(lift_command);
+        robot.left_lift.setPower(lift_command);
 
         // Return Value
         return (Math.abs(lift_error) < Presets.LIFT_POSITION_THRESHOLD);
@@ -59,9 +62,10 @@ public abstract class Lift {
     // Method for Stopping the Lift
     public static boolean lift_stop () {
         // Set Motor Power
-        robot.lift.setPower(0);
+        robot.right_lift.setPower(0);
+        robot.left_lift.setPower(0);
 
         // Return Value
-        return robot.lift.getPower() == 0;
+        return robot.right_lift.getPower() == 0 && robot.left_lift.getPower() == 0;
     }
 }

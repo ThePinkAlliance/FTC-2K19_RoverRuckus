@@ -7,7 +7,7 @@ public abstract class Base {
     // Define Class Members
     public static double left_wheel_command;
     public static double right_wheel_command;
-    private static Hardware robot = new Hardware();
+    public static Hardware robot = new Hardware();
 
     // Method for Driving in Tank Drive using Commands
     public static boolean drive_by_command(double right, double left) {

@@ -12,7 +12,7 @@ public abstract class Extender {
     public static double extend_error;
     public static double previous_extend_position;
     public static double extend_speed;
-    private static Hardware robot = new Hardware();
+    public static Hardware robot = new Hardware();
 
     // Method for Extending Using Commands
     public static boolean extend_by_command (double command) {
@@ -20,7 +20,8 @@ public abstract class Extender {
         extend_command = command;
 
         // Set Motor Power
-        robot.extend.setPower(extend_command);
+        robot.right_extend.setPower(extend_command);
+        robot.left_extend.setPower(extend_command);
 
         // Return Value
         return extend_command > 0;
@@ -30,13 +31,14 @@ public abstract class Extender {
     public static boolean extend_to_position (double position) {
         // Define Commands
         extend_target_position = position;
-        extend_error = extend_target_position - robot.extend.getCurrentPosition();
-        extend_speed = robot.extend.getCurrentPosition() - previous_extend_position;
-        previous_extend_position = robot.extend.getCurrentPosition();
+        extend_error = extend_target_position - ((robot.right_extend.getCurrentPosition() + robot.left_extend.getCurrentPosition())/2);
+        extend_speed = ((robot.right_extend.getCurrentPosition() - previous_extend_position) + (robot.left_extend.getCurrentPosition() - previous_extend_position))/2;
+        previous_extend_position = ((robot.right_extend.getCurrentPosition() + robot.left_extend.getCurrentPosition()))/2;
         extend_command = PD.get_extend_command(extend_error, extend_speed);
 
         // Set Motor Power
-        robot.extend.setPower(extend_command);
+        robot.right_extend.setPower(extend_command);
+        robot.left_extend.setPower(extend_command);
 
         // Return Value
         return (Math.abs(extend_error) < Presets.EXTEND_POSITION_THRESHOLD);
@@ -45,13 +47,14 @@ public abstract class Extender {
     // Method for Holding the Extender in Place
     public static boolean extend_hold () {
         // Define Commands
-        extend_error = previous_extend_position - robot.extend.getCurrentPosition();
-        extend_speed = robot.extend.getCurrentPosition() - previous_extend_position;
-        previous_extend_position = robot.extend.getCurrentPosition();
+        extend_error = previous_extend_position - ((robot.right_extend.getCurrentPosition() + robot.left_extend.getCurrentPosition())/2);
+        extend_speed = ((robot.right_extend.getCurrentPosition() + robot.left_extend.getCurrentPosition())/2) - previous_extend_position;
+        previous_extend_position = ((robot.right_extend.getCurrentPosition() + robot.left_extend.getCurrentPosition())/2);
         extend_command = PD.get_extend_command(0, extend_speed);
 
         // Set Motor Power
-        robot.extend.setPower(extend_command);
+        robot.right_extend.setPower(extend_command);
+        robot.left_extend.setPower(extend_command);
 
         // Return Value
         return (Math.abs(extend_error) < Presets.EXTEND_POSITION_THRESHOLD);
@@ -60,9 +63,10 @@ public abstract class Extender {
     // Method for Stopping Extender
     public static boolean extend_stop () {
         // Define Commands
-        robot.extend.setPower(0);
+        robot.right_extend.setPower(0);
+        robot.left_extend.setPower(0);
 
         // Return Value
-        return robot.extend.getPower() == 0;
+        return robot.right_extend.getPower() == 0 && robot.left_extend.getPower() == 0;
     }
 }

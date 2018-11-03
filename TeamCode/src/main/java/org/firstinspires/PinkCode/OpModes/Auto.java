@@ -105,14 +105,18 @@ public class Auto extends OpMode {
                 // Reset Encoders
                 robot.left_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.right_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.right_extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.left_extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.collect.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.right_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.left_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.left_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 robot.right_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                robot.extend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.right_extend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.left_extend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 robot.collect.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.right_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.left_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 // Set Starting Position to Center
                 center_auto = center_initialize;
                 // Send Telemetry to Tell Drivers That the Robot is Ready
@@ -127,14 +131,18 @@ public class Auto extends OpMode {
                 // Reset Encoders
                 robot.left_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.right_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.right_extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.left_extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.collect.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.right_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.left_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.left_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 robot.right_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                robot.extend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.right_extend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.left_extend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 robot.collect.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.right_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.left_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
                 // Set Starting Position to Side
                 side_auto = side_initialize;

@@ -1,5 +1,6 @@
 package org.firstinspires.PinkCode.Subsystems;
 
+import org.firstinspires.PinkCode.OpModes.Teleop;
 import org.firstinspires.PinkCode.Robot.Hardware;
 import org.firstinspires.PinkCode.Robot.Presets;
 
@@ -7,7 +8,7 @@ import org.firstinspires.PinkCode.Robot.Presets;
 public abstract class Collector {
     // Define Class Members
     public static double collect_command;
-    private static Hardware robot = new Hardware();
+    public static Hardware robot = new Hardware();
 
     // Method for Collecting
     public static boolean collect () {
