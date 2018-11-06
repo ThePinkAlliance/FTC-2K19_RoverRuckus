@@ -65,6 +65,17 @@ public class Teleop extends OpMode{
             }
         }
 
+        // Collector Rotation Controls
+        if (gamepad1.a) {
+            Collector.rotate_to_position(0);
+        } else if (gamepad1.b) {
+            Collector.rotate_to_position(20);
+        } else if (gamepad1.x) {
+            Collector.rotate_to_position(-20);
+        } else {
+            Collector.rotate_hold();
+        }
+
         // Extender Controls Using Tower Right Joystick Command and Tower Buttons
         if (gamepad2.right_stick_y > 0.1 || gamepad2.right_stick_y < -0.1) {
             Extender.extend_by_command(gamepad2.right_stick_y);

@@ -12,6 +12,7 @@ public abstract class Lift {
     public static double lift_error;
     public static double lift_speed;
     public static double previous_lift_position;
+    public static double lift_score_target_position;
     public static Hardware robot = new Hardware();
 
     // Method for Raising/Lowering the Lift Using Commands
@@ -58,6 +59,19 @@ public abstract class Lift {
         // Return Value
         return (Math.abs(lift_error) < Presets.LIFT_POSITION_THRESHOLD);
     }
+
+    // Method for Rotating the Scoring Bucket
+//    public static boolean lift_score_rotate (double position) {
+//        // Define Commands
+//        lift_score_target_position = position;
+//
+//        // Set Servo Position
+//        robot.left_score_rotate.setPosition(lift_score_target_position);
+//        robot.right_score_rotate
+//
+//        // Return Value
+//        return robot.left_score_rotate.getPosition() == lift_score_target_position;
+//    }
 
     // Method for Stopping the Lift
     public static boolean lift_stop () {

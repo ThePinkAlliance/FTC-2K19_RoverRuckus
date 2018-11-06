@@ -8,6 +8,7 @@ import org.firstinspires.PinkCode.Robot.Presets;
 public abstract class Collector {
     // Define Class Members
     public static double collect_command;
+    public static double collect_rotate_target_position;
     public static Hardware robot = new Hardware();
 
     // Method for Collecting
@@ -44,6 +45,30 @@ public abstract class Collector {
 
         // Return Value
         return collect_command == 0;
+    }
+
+    // Method to Rotate the Collector
+    public static boolean rotate_to_position (double position) {
+        // Define Commands
+        collect_rotate_target_position = position;
+
+        // Set Servo Position
+        robot.collector_rotate.setPosition(collect_rotate_target_position);
+
+        // Return Value
+        return robot.collector_rotate.getPosition() == collect_rotate_target_position;
+    }
+
+    // Method to Hold Collector Rotation
+    public static boolean rotate_hold () {
+        // Define Commands
+        collect_rotate_target_position = robot.collector_rotate.getPosition();
+
+        // Set Servo Position
+        robot.collector_rotate.setPosition(collect_rotate_target_position);
+
+        // Return Value
+        return robot.collector_rotate.getPosition() == collect_rotate_target_position;
     }
 
     // Method for Stopping the Collector
