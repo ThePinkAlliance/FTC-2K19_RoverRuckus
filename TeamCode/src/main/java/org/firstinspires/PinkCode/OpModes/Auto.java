@@ -15,9 +15,11 @@ import org.firstinspires.PinkCode.Subsystems.Lift;
 import static org.firstinspires.PinkCode.OpModes.Auto.auto_picker.side;
 import static org.firstinspires.PinkCode.OpModes.Auto.auto_picker.center;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.center_initialize;
+import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_left;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_middle;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_right;
+import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.score_and_set;
 import static org.firstinspires.PinkCode.OpModes.Auto.side_auto.side_initialize;
 
 
@@ -69,6 +71,7 @@ public class Auto extends OpMode {
     private static boolean left = false;
     private static boolean middle = false;
     private static boolean right = false;
+    private static boolean flag = true;
     private double runTime = getRuntime();
     public Hardware robot = new Hardware();
 
@@ -172,9 +175,15 @@ public class Auto extends OpMode {
                 {
                     center_auto = scan_right;
                 }
-                else
+                else if(Center)
                 {
                     center_auto = scan_middle;
+                }
+                else
+                {
+                    telemetry.addData("Status", "Did not see gold");
+                    telemetry.update();
+                    center_auto = score_and_set;
                 }
                      case scan_left:
                         telemetry.addData("Status", "Scanning for left");
@@ -218,22 +227,50 @@ public class Auto extends OpMode {
                             if (runTime > 28000) {
                                 //Extend to crater
                                 Extender.extend_to_position(Presets.EXTEND_COLLECT_POSITION);
+                                Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
                                 //End
                                 stop();
                             }
                             //if timer > 28s continuous scoring
                             else {
                                 //collect game pieces
-                                Extender.extend_to_position(Presets.EXTEND_COLLECT_POSITION);
-                                //wait 2 seconds to get collector past crater wall before collecting
-                                //TODO: add delay
-                                Collector.collect();
+                                while(flag)
+                                {
+                                    if (robot.left_lift.getCurrentPosition() <= Presets.LIFT_SCORE_POSITION && robot.right_lift.getCurrentPosition() <= Presets.LIFT_SCORE_POSITION) {
+                                        Extender.extend_to_position(Presets.EXTEND_COLLECT_POSITION);
+                                        flag = false;
+                                    } else {
+                                        Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
+                                    }
+                                }
+                                //If statement to not allow collector to drop before inside crater.
+                                while (!flag)
+                               if(robot.left_extend.getCurrentPosition() >= Presets.EXTEND_COLLECT_POSITION && robot.right_extend.getCurrentPosition() >= Presets.EXTEND_COLLECT_POSITION)
+                               {
+                                   Collector.collect();
+                                   flag = true;
+                               }
+                               else
+                               {
+                                   Collector.hold();
+                               }
                                 //move collector back, sort, and score
-                                Extender.extend_to_position(Presets.EXTEND_SORT_POSITION);
+                               while(flag)
+                               {
+                                   if (robot.left_lift.getCurrentPosition() <= Presets.LIFT_SORT_POSITION && robot.right_lift.getCurrentPosition() <= Presets.LIFT_SORT_POSITION) {
+                                       Extender.extend_to_position(Presets.EXTEND_SORT_POSITION);
+                                       flag = false;
+                                   }
+                                   else
+                                   {
+                                       Extender.extend_hold();
+                                   }
+                               }
                                 Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
                                 Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
                                 Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
-                                //TODO: add delay
+                                flag = true;
+
 
 
                             }
