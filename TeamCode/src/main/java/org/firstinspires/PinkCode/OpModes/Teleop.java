@@ -3,28 +3,32 @@ package org.firstinspires.PinkCode.OpModes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.PinkCode.Robot.Controls;
-import org.firstinspires.PinkCode.Robot.Hardware;
 import org.firstinspires.PinkCode.Robot.Presets;
 import org.firstinspires.PinkCode.Subsystems.Base;
 import org.firstinspires.PinkCode.Subsystems.Collector;
 import org.firstinspires.PinkCode.Subsystems.Extender;
 import org.firstinspires.PinkCode.Subsystems.Lift;
+import org.firstinspires.PinkCode.Subsystems.Scorer;
+
+import static org.firstinspires.PinkCode.Subsystems.Collector.robot;
 
 // Class for Player-Controlled Period of the Game Which Binds Controls to Subsystems
 @TeleOp(name = "Teleop", group = "Teleop")
 public class Teleop extends OpMode{
+    public boolean tower_start_pressed;
+
     // Code to Run Once When the Driver Hits Init
     public void init() {
         Base.robot.init(hardwareMap);
-        Collector.robot.init(hardwareMap);
+        robot.init(hardwareMap);
         Extender.robot.init(hardwareMap);
         Lift.robot.init(hardwareMap);
+        Scorer.robot.init(hardwareMap);
     }
 
     // Code to Run Constantly While the Program is Running
     public void loop() {
-       // Tank Drive Using Base Joystick Commands
+        // Tank Drive Using Base Joystick Commands
         if (gamepad1.right_stick_y > 0.1 || gamepad1.right_stick_y < -0.1 || gamepad1.left_stick_y < -0.1 || gamepad1.left_stick_y > 0.1) {
             Base.drive_by_command(gamepad1.right_stick_y, gamepad1.left_stick_y);
             if (Base.drive_by_command(gamepad1.right_stick_y, gamepad1.left_stick_y)) {
@@ -34,7 +38,7 @@ public class Teleop extends OpMode{
             }
         } else {
             Base.drive_by_command(0, 0);
-            if (Base.drive_by_command(0,0)) {
+            if (Base.drive_by_command(0, 0)) {
                 telemetry.addData("Base: ", "Stopped");
             } else {
                 telemetry.addData("Base: ", "Not Stopped");
@@ -42,20 +46,33 @@ public class Teleop extends OpMode{
         }
 
         // Collector Controls Using Base Bumpers
-        if (gamepad1.right_bumper) {
+        if (gamepad2.right_bumper) {
             Collector.collect();
+        } else if (gamepad2.left_bumper) {
+            Collector.eject();
+        } else if (gamepad1.right_bumper) {
+            Collector.collect();
+            Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
             if (Collector.collect()) {
                 telemetry.addData("Collector: ", "Success - Collecting");
             } else {
                 telemetry.addData("Collector: ", "Error - Failed to Collect");
             }
-        } else if (gamepad1.left_bumper){
+        } else if (gamepad1.left_bumper) {
             Collector.eject();
+            Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
             if (Collector.eject()) {
                 telemetry.addData("Collector: ", "Success - Ejecting");
             } else {
                 telemetry.addData("Collector: ", " Error - Failed to Eject");
             }
+        } else if (gamepad1.a) {
+            Collector.hold();
+            Collector.rotate_to_position(Presets.COLLECTOR_SORT_POSITION);
+        } else if (gamepad1.b) {
+            Collector.hold();
+            Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
+            Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
         } else {
             Collector.hold();
             if (Collector.hold()) {
@@ -65,21 +82,10 @@ public class Teleop extends OpMode{
             }
         }
 
-        // Collector Rotation Controls
-        if (gamepad1.a) {
-            Collector.rotate_to_position(0);
-        } else if (gamepad1.b) {
-            Collector.rotate_to_position(20);
-        } else if (gamepad1.x) {
-            Collector.rotate_to_position(-20);
-        } else {
-            Collector.rotate_hold();
-        }
-
         // Extender Controls Using Tower Right Joystick Command and Tower Buttons
-        if (gamepad2.right_stick_y > 0.1 || gamepad2.right_stick_y < -0.1) {
-            Extender.extend_by_command(gamepad2.right_stick_y);
-            if (Extender.extend_by_command(gamepad2.right_stick_y)) {
+        if (gamepad2.left_stick_y > 0.1 || gamepad2.left_stick_y < -0.1) {
+            Extender.extend_by_command(gamepad2.left_stick_y);
+            if (Extender.extend_by_command(gamepad2.left_stick_y)) {
                 telemetry.addData("Extender: ", "Driving Using Joystick");
             } else {
                 telemetry.addData("Extender: ", "Stopped");
@@ -115,33 +121,31 @@ public class Teleop extends OpMode{
         }
 
         // Lift Controls Using Tower Left Joystick Command and D-Pad
-        if (gamepad2.left_stick_y > 0.1 || gamepad2.left_stick_y < -0.1) {
-            Lift.lift_by_command(gamepad2.left_stick_y);
-            if (Lift.lift_by_command(gamepad2.left_stick_y)) {
+        if (gamepad2.right_stick_y > 0.1 || gamepad2.right_stick_y < -0.1) {
+            Lift.lift_by_command(gamepad2.right_stick_y);
+            if (Lift.lift_by_command(gamepad2.right_stick_y)) {
                 telemetry.addData("Lift: ", "Driving Using Joystick");
             } else {
                 telemetry.addData("Lift: ", "Stopped");
             }
         } else if (gamepad2.dpad_up) {
-            Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
-            if (Lift.lift_to_position(Presets.LIFT_SCORE_POSITION)) {
-                telemetry.addData("Lift: ", "Success - Reached Score Position");
-            } else {
-                telemetry.addData("Lift: ", "Error - Didn't Reach Score Position");
-            }
+            Collector.rotate_to_position(robot.collector_rotate.getPosition() + 0.1);
         } else if (gamepad2.dpad_down) {
-            Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
-            if (Lift.lift_to_position(Presets.LIFT_SORT_POSITION)) {
-                telemetry.addData("Lift: ", "Success - Reached Collapsed Position");
-            } else {
-                telemetry.addData("Lift: ", "Error - Didn't Reach Collapse Position");
-            }
-        } else {
-            Lift.lift_hold();
-            if (Lift.lift_hold()) {
-                telemetry.addData("Lift: ", "Holding Position");
-            } else {
-                telemetry.addData("Lift: ", "Not Holding Position");
+            Collector.rotate_to_position(robot.collector_rotate.getPosition() + 0.1);
+        }
+
+        // Tower Bucket Controls
+        if (gamepad2.dpad_right) {
+            Scorer.score_rotate_to_position(Presets.SCORER_SCORE);
+        } else if (gamepad2.dpad_left) {
+            Scorer.score_rotate_to_position(Presets.SCORER_COLLECT);
+        } else if (gamepad2.start) {
+            if (tower_start_pressed) {
+                Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
+                tower_start_pressed = false;
+            } else if (!tower_start_pressed) {
+                Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
+                tower_start_pressed = true;
             }
         }
         telemetry.update();

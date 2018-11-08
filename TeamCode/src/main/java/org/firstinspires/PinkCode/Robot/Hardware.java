@@ -15,9 +15,9 @@ public class Hardware {
     public DcMotor right_lift; // Port 2 Expansion Hub 1
     public DcMotor left_lift; // Port 2 Expansion Hub 2
     // Servos
-//    public Servo left_score_rotate;
-//    public Servo right_score_rotate;
-//    public Servo score_flap;
+    public Servo score_left_rotate;
+    public Servo score_right_rotate;
+    public Servo score_flap;
     public Servo collector_rotate;
 
     // Local OpMode Members
@@ -80,9 +80,9 @@ public class Hardware {
         left_lift.setPower(0);
 
         // Servos
-//        left_score_rotate = hwMap.get(Servo.class, "left_score_rotate");
-//        right_score_rotate = hwMap.get(Servo.class, "right_score_rotate");
-//        score_flap = hwMap.get(Servo.class, "score_flap");
+        score_left_rotate = hwMap.get(Servo.class, "left_score_rotate");
+        score_right_rotate = hwMap.get(Servo.class, "right_score_rotate");
+        score_flap = hwMap.get(Servo.class, "score_flap");
         collector_rotate = hwMap.get(Servo.class, "collector_rotate");
     }
 }

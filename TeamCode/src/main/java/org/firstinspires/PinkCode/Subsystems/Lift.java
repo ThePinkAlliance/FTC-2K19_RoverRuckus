@@ -12,13 +12,20 @@ public abstract class Lift {
     public static double lift_error;
     public static double lift_speed;
     public static double previous_lift_position;
-    public static double lift_score_target_position;
     public static Hardware robot = new Hardware();
 
     // Method for Raising/Lowering the Lift Using Commands
     public static boolean lift_by_command (double command) {
         // Define Commands
-        lift_command = command;
+        if (robot.score_left_rotate.getPosition() > Presets.SCORER_COLLECT || robot.score_right_rotate.getPosition() - 1 < Presets.SCORER_COLLECT) {
+            if (command < Presets.LIFT_TRAVEL_POSITION) {
+                lift_command = Presets.LIFT_TRAVEL_POSITION;
+            } else {
+                lift_command = command;
+            }
+        } else {
+            lift_command = command;
+        }
 
         // Set Motor Power
         robot.right_lift.setPower(lift_command);
@@ -31,7 +38,15 @@ public abstract class Lift {
     // Method for Controlling the Lift Using Positions
     public static boolean lift_to_position (double position) {
         // Define Commands
-        lift_target_position = position;
+        if (robot.score_left_rotate.getPosition() > Presets.SCORER_COLLECT || robot.score_right_rotate.getPosition() - 1 < Presets.SCORER_COLLECT) {
+            if (position < Presets.LIFT_TRAVEL_POSITION) {
+                lift_target_position = Presets.LIFT_TRAVEL_POSITION;
+            } else {
+                lift_target_position = position;
+            }
+        } else {
+            lift_target_position = position;
+        }
         lift_error = lift_target_position - ((robot.right_lift.getCurrentPosition() + robot.left_lift.getCurrentPosition())/2);
         lift_speed = ((robot.right_lift.getCurrentPosition() + robot.left_lift.getCurrentPosition())/2) - previous_lift_position;
         previous_lift_position = ((robot.right_lift.getCurrentPosition() + robot.left_lift.getCurrentPosition())/2);
@@ -59,19 +74,6 @@ public abstract class Lift {
         // Return Value
         return (Math.abs(lift_error) < Presets.LIFT_POSITION_THRESHOLD);
     }
-
-    // Method for Rotating the Scoring Bucket
-//    public static boolean lift_score_rotate (double position) {
-//        // Define Commands
-//        lift_score_target_position = position;
-//
-//        // Set Servo Position
-//        robot.left_score_rotate.setPosition(lift_score_target_position);
-//        robot.right_score_rotate
-//
-//        // Return Value
-//        return robot.left_score_rotate.getPosition() == lift_score_target_position;
-//    }
 
     // Method for Stopping the Lift
     public static boolean lift_stop () {
