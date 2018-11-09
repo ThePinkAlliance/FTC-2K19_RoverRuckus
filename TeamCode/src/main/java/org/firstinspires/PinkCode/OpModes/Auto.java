@@ -11,16 +11,18 @@ import org.firstinspires.PinkCode.Subsystems.Base;
 import org.firstinspires.PinkCode.Subsystems.Collector;
 import org.firstinspires.PinkCode.Subsystems.Extender;
 import org.firstinspires.PinkCode.Subsystems.Lift;
+import org.firstinspires.PinkCode.Subsystems.Phone;
+import org.firstinspires.PinkCode.Subsystems.Scorer;
 
 import static org.firstinspires.PinkCode.OpModes.Auto.auto_picker.side;
 import static org.firstinspires.PinkCode.OpModes.Auto.auto_picker.center;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.center_initialize;
-import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_left;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_middle;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_right;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.score_and_set;
 import static org.firstinspires.PinkCode.OpModes.Auto.side_auto.side_initialize;
+
 
 
 
@@ -39,6 +41,7 @@ public class Auto extends OpMode {
     public enum center_auto {
         center_stop,
         center_initialize,
+        release,
         scan,
         scan_left,
         scan_right,
@@ -72,6 +75,7 @@ public class Auto extends OpMode {
     private static boolean middle = false;
     private static boolean right = false;
     private static boolean flag = true;
+    private static int i = 0;
     private double runTime = getRuntime();
     public Hardware robot = new Hardware();
 
@@ -163,25 +167,42 @@ public class Auto extends OpMode {
             case center_initialize:
                 //Reset All Encoders
                 //Scan for gold cube
+            case release:
+                telemetry.addData("Status","Releasing robot");
+                telemetry.update();
+
+
+                for (i = 0; i < 146000; i++)
+                {
+                    Lift.lift_to_position(Presets.LIFT_RELEASE_BREAK);
+                }
+                    Lift.lift_to_position(Presets.LIFT_RELEASE_POSITION);
+
             case scan:
                 telemetry.addData("Status", "Scanning for Cube");
                 telemetry.update();
-                //TODO: Scan for gold cube
+                //TODO: Scan for Gold Cube
                 if(left)
                 {
+                    telemetry.addData("Status", "Scanned Left");
+                    telemetry.update();
                     center_auto = scan_left;
                 }
                 else if (right)
                 {
+                    telemetry.addData("Status", "Scanned Right");
+                    telemetry.update();
                     center_auto = scan_right;
                 }
                 else if(Center)
                 {
+                    telemetry.addData("Status", "Scanned Middle");
+                    telemetry.update();
                     center_auto = scan_middle;
                 }
                 else
                 {
-                    telemetry.addData("Status", "Did not see gold");
+                    telemetry.addData("Status", "Nothing Scanned");
                     telemetry.update();
                     center_auto = score_and_set;
                 }
@@ -193,7 +214,11 @@ public class Auto extends OpMode {
                         //Extend to gold cube
                         Extender.extend_to_position(Presets.EXTEND_GOLD_POSITION);
                         //Collect Gold Cube
-                        Collector.collect();
+                         Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
+                         Collector.collect();
+                         Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
+                         Collector.eject();
+
                     case scan_right:
                         telemetry.addData("Status", "Scanning for right");
                         telemetry.update();
@@ -202,22 +227,40 @@ public class Auto extends OpMode {
                         //Extend to gold cube
                         Extender.extend_to_position(Presets.EXTEND_GOLD_POSITION);
                         //Collect Gold Cube
+                        Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
                         Collector.collect();
+                        Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
+                        Collector.eject();
+
                     case scan_middle:
                         telemetry.addData("Status", "Scanning for middle");
                         telemetry.update();
                         //Extend to gold cube
                         Extender.extend_to_position(Presets.EXTEND_MID_GOLD_POSITION);
                         //Collect Cube
+                        Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
                         Collector.collect();
+                        Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
+                        Collector.eject();
+
                     case score_and_set:
                         telemetry.addData("Status", "Scoring and Setting");
                         telemetry.update();
                         //Score cube and set collector to just outside the crater
                         Extender.extend_to_position(Presets.EXTEND_SORT_POSITION);
                         Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
-                        //TODO: Scoring Code
-                        Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
+                        Scorer.score_rotate_to_position(Presets.SCORER_SCORE);
+                        Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
+                        if (runTime < 30)
+                        {
+                            Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
+                            while(flag)
+                            if(robot.left_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION && robot.right_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION)
+                            {
+                                Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
+                                flag = false;
+                            }
+                        }
                         //While Loop for continuous scoring
                     case continuous_score:
                         telemetry.addData("Status", "Continuous Scoring");
@@ -234,32 +277,35 @@ public class Auto extends OpMode {
                             //if timer > 28s continuous scoring
                             else {
                                 //collect game pieces
-                                while(flag)
+                                while(!flag)
                                 {
                                     if (robot.left_lift.getCurrentPosition() <= Presets.LIFT_SCORE_POSITION && robot.right_lift.getCurrentPosition() <= Presets.LIFT_SCORE_POSITION) {
                                         Extender.extend_to_position(Presets.EXTEND_COLLECT_POSITION);
-                                        flag = false;
+                                        flag = true;
                                     } else {
                                         Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
                                     }
                                 }
                                 //If statement to not allow collector to drop before inside crater.
-                                while (!flag)
+                                while (flag)
                                if(robot.left_extend.getCurrentPosition() >= Presets.EXTEND_COLLECT_POSITION && robot.right_extend.getCurrentPosition() >= Presets.EXTEND_COLLECT_POSITION)
                                {
+                                   Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
                                    Collector.collect();
-                                   flag = true;
+                                   Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
+                                   Collector.eject();
+                                   flag = false;
                                }
                                else
                                {
                                    Collector.hold();
                                }
                                 //move collector back, sort, and score
-                               while(flag)
+                               while(!flag)
                                {
                                    if (robot.left_lift.getCurrentPosition() <= Presets.LIFT_SORT_POSITION && robot.right_lift.getCurrentPosition() <= Presets.LIFT_SORT_POSITION) {
                                        Extender.extend_to_position(Presets.EXTEND_SORT_POSITION);
-                                       flag = false;
+                                       flag = true;
                                    }
                                    else
                                    {
@@ -267,12 +313,19 @@ public class Auto extends OpMode {
                                    }
                                }
                                 Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
-                                Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
+                                Scorer.score_rotate_to_position(Presets.SCORER_SCORE);
+                                Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
+                                if (runTime < 30)
+                                {
+                                    Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
+                                    while(flag)
+                                        if(robot.left_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION && robot.right_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION)
+                                        {
+                                            Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
+                                            flag = false;
+                                        }
+                                }
                                 Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
-                                flag = true;
-
-
-
                             }
                         }
         }
@@ -306,7 +359,10 @@ public class Auto extends OpMode {
                 //Extend to gold cube
                 Extender.extend_to_position(Presets.EXTEND_GOLD_POSITION);
                 //Collect Gold Cube
+                Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
                 Collector.collect();
+                Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
+                Collector.eject();
             case scan_right:
                 telemetry.addData("Status", "Scanning for right");
                 telemetry.update();
@@ -315,22 +371,36 @@ public class Auto extends OpMode {
                 //Extend to gold cube
                 Extender.extend_to_position(Presets.EXTEND_GOLD_POSITION);
                 //Collect Gold Cube
+                Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
                 Collector.collect();
+                Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
+                Collector.eject();
             case scan_middle:
                 telemetry.addData("Status", "Scanning for middle");
                 telemetry.update();
                 //Extend to gold cube
                 Extender.extend_to_position(Presets.EXTEND_MID_GOLD_POSITION);
                 //Collect Cube
+                Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
                 Collector.collect();
+                Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
+                Collector.eject();
             case score_and_set:
                 telemetry.addData("Status", "Scoring and Setting");
                 telemetry.update();
                 //Score cube and set collector to just outside the crater
                 Extender.extend_to_position(Presets.EXTEND_SORT_POSITION);
                 Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
-                //TODO: Scoring Code
-                Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
+                Scorer.score_rotate_to_position(Presets.SCORER_SCORE);
+                Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
+                if (runTime < 30) {
+                    Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
+                    while (flag)
+                        if (robot.left_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION && robot.right_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION) {
+                            Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
+                            flag = false;
+                        }
+                }
             case score:
                 telemetry.addData("Status", "Scoring");
                 telemetry.update();
@@ -340,12 +410,19 @@ public class Auto extends OpMode {
                 Base.drive_by_command(-.5,.5);
                 //extend into crater and collect
                 Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
+                //Extend into crater and collect materials
+                Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
                 Collector.collect();
+                Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
+                Collector.eject();
                 //Turn back and sort
                 Extender.extend_to_position(Presets.EXTEND_SORT_POSITION);
                 Base.drive_by_command(.5,-.5);
                 //Score
-                //TODO: Scoring Code
+                Scorer.score_rotate_to_position(Presets.SCORER_SCORE);
+                Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
+                //TODO: Add Delay
+                Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
                 //Drive forward
                 Base.drive_by_command(3,3);
                 //Turn Right

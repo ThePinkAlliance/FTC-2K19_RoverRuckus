@@ -7,8 +7,8 @@ public abstract class Presets {
     public static final double COLLECTOR_EJECT_POWER = -1; // Power Sent to Motor While Ejecting
     public static final double COLLECTOR_HOLD_POWER = 0; // Power Sent to Motor by Default
     public static final double COLLECTOR_COLLECT_POSITION = 0;
-    public static final double COLLECTOR_TRAVEL_POSITION = 0.2;
-    public static final double COLLECTOR_SORT_POSITION = 0.4;
+    public static final double COLLECTOR_TRAVEL_POSITION = .2;
+    public static final double COLLECTOR_SORT_POSITION = .4;
 
     // Extender Presets TODO: Confirm Extender Presets
     public static final double EXTEND_Kp = 0; // Kp for Extender PD
@@ -29,13 +29,15 @@ public abstract class Presets {
     public static final double LIFT_MIN_POWER = -1; // Most Power Sent While Lowering Lift
     public static final double LIFT_MAX_POWER = 1; // Most Power Sent While Raising Lift
     public static final double LIFT_SCORE_POSITION = 80; // Raised Position for Scoring in Lander
-    public static final double LIFT_TRAVEL_POSITION = 40; // Safety Threshold for Rotation of Scorer
     public static final double LIFT_SORT_POSITION = 0; // Lowered Position for Collection from Sort
+    public static final double LIFT_RELEASE_BREAK = -.25;
+    public static final double LIFT_RELEASE_POSITION = 80;
+    public static final double LIFT_TRAVEL_POSITION = 40;
 
     // Scorer Presets TODO: Confirm Scorer Presets
-    public static final double SCORER_COLLECT = 0; // Position for Collecting from Collector
-    public static final double SCORER_TRAVEL = 0.5; // Position for Travelling Up and Down
-    public static final double SCORER_SCORE = 1; // Position for Scoring
+    public static final double SCORER_COLLECT = 0;
+    public static final double SCORER_TRAVEL = 0.5;
+    public static final double SCORER_SCORE = 1;
     public static final double SCORER_FLAP_OPEN = 0;
     public static final double SCORER_FLAP_CLOSED = 1;
 }

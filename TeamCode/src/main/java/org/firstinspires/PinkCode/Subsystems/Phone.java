@@ -10,6 +10,7 @@ public abstract class Phone extends CameraOp {
     int ds2 = 2;  // additional downsampling of the image
     private int looped = 0;
     private long lastLoopTime = 0;
+    public String colorString = "";
     // set to 1 to disable further downsampling
 
     /*
@@ -54,7 +55,7 @@ public abstract class Phone extends CameraOp {
                 }
             }
             int color = highestColor(redValue, greenValue, blueValue);
-            String colorString = "";
+
             switch (color) {
                 case 0:
                     colorString = "RED";
@@ -68,10 +69,5 @@ public abstract class Phone extends CameraOp {
             telemetry.addData("Color:", "Color detected is: " + colorString);
 
         }
-        long endTime = System.currentTimeMillis();
-        telemetry.addData("Dims", Integer.toString(width / ds2) + " x " + Integer.toString(height / ds2));
-        telemetry.addData("Loop Time", Long.toString(endTime - startTime));
-        telemetry.addData("Loop to Loop Time", Long.toString(endTime - lastLoopTime));
-
-        lastLoopTime = endTime;
-    }}
+    }
+}

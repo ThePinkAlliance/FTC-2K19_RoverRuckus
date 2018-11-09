@@ -12,11 +12,10 @@ public abstract class Scorer {
     public static double score_left_target_position;
     public static double score_flap_target_position;
     public static Hardware robot = new Hardware();
-
     // Method for Rotating the Scoring Bucket
     public static boolean score_rotate_to_position (double position) {
         // Define Commands
-        if (robot.right_lift.getCurrentPosition() > Presets.LIFT_TRAVEL_POSITION || robot.left_lift.getCurrentPosition() > Presets.LIFT_TRAVEL_POSITION) {
+        if (robot.right_lift.getCurrentPosition() > Presets.LIFT_SCORE_POSITION || robot.left_lift.getCurrentPosition() > Presets.LIFT_SCORE_POSITION) {
             if (position > Presets.SCORER_TRAVEL) {
                 score_target_position = Presets.SCORER_TRAVEL;
             } else {
