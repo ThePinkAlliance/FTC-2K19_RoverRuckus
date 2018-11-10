@@ -3,6 +3,7 @@ package org.firstinspires.PinkCode.Subsystems;
 import org.firstinspires.PinkCode.Robot.Hardware;
 import org.firstinspires.PinkCode.Robot.PD;
 import org.firstinspires.PinkCode.Robot.Presets;
+import com.qualcomm.robotcore.util.Range;
 
 // Abstract Class to Define the Methods of the Extender Subsystem
 public abstract class Extender {
@@ -19,6 +20,12 @@ public abstract class Extender {
         // Define Commands
         extend_command = command;
 
+        // Limit the motor power near the end of travel
+        if (command > 0){
+            extend_command = Range.clip(command, 0, ((Presets.EXTEND_MAX_POSITION - robot.right_extend.getCurrentPosition())*0.1));
+        } else {
+            extend_command = Range.clip(command,((robot.right_extend.getCurrentPosition()-Presets.EXTEND_MIN_POSITION)*0.1), 0);
+        }
         // Set Motor Power
         robot.right_extend.setPower(extend_command);
         robot.left_extend.setPower(extend_command);
@@ -31,9 +38,9 @@ public abstract class Extender {
     public static boolean extend_to_position (double position) {
         // Define Commands
         extend_target_position = position;
-        extend_error = extend_target_position - ((robot.right_extend.getCurrentPosition() + robot.left_extend.getCurrentPosition())/2);
-        extend_speed = ((robot.right_extend.getCurrentPosition() - previous_extend_position) + (robot.left_extend.getCurrentPosition() - previous_extend_position))/2;
-        previous_extend_position = ((robot.right_extend.getCurrentPosition() + robot.left_extend.getCurrentPosition()))/2;
+        extend_error = extend_target_position - robot.right_extend.getCurrentPosition();
+        extend_speed = robot.right_extend.getCurrentPosition() - previous_extend_position;
+        previous_extend_position = robot.right_extend.getCurrentPosition();
         extend_command = PD.get_extend_command(extend_error, extend_speed);
 
         // Set Motor Power
@@ -47,9 +54,9 @@ public abstract class Extender {
     // Method for Holding the Extender in Place
     public static boolean extend_hold () {
         // Define Commands
-        extend_error = previous_extend_position - ((robot.right_extend.getCurrentPosition() + robot.left_extend.getCurrentPosition())/2);
-        extend_speed = ((robot.right_extend.getCurrentPosition() + robot.left_extend.getCurrentPosition())/2) - previous_extend_position;
-        previous_extend_position = ((robot.right_extend.getCurrentPosition() + robot.left_extend.getCurrentPosition())/2);
+        extend_error = previous_extend_position - robot.right_extend.getCurrentPosition();
+        extend_speed = robot.right_extend.getCurrentPosition() - previous_extend_position;
+        previous_extend_position = robot.right_extend.getCurrentPosition();
         extend_command = PD.get_extend_command(0, extend_speed);
 
         // Set Motor Power

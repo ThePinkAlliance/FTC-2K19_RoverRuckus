@@ -7,12 +7,14 @@ import org.firstinspires.PinkCode.Robot.Presets;
 // Abstract Class to Define the Methods of the Extender Subsystem
 public abstract class Scorer {
     // Define Class Members
+    public static double rotate_command;
     public static double score_target_position;
     public static double score_right_target_position;
     public static double score_left_target_position;
     public static double score_flap_target_position;
     public static Hardware robot = new Hardware();
-    // Method for Rotating the Scoring Bucket
+
+    // Method for Rotating the Scoring Bucket to a Position
     public static boolean score_rotate_to_position (double position) {
         // Define Commands
         if (robot.right_lift.getCurrentPosition() > Presets.LIFT_SCORE_POSITION || robot.left_lift.getCurrentPosition() > Presets.LIFT_SCORE_POSITION) {
@@ -33,6 +35,18 @@ public abstract class Scorer {
 
         // Return Value
         return robot.score_left_rotate.getPosition() == score_left_target_position && robot.score_right_rotate.getPosition() == score_right_target_position;
+    }
+
+    // Method for Rotating the Scoring Bucket Using Commands
+    public static boolean score_rotate_by_command (double command) {
+        // Define Commands
+
+        // Set Motor Power
+        robot.right_lift.setPower(command);
+        robot.left_lift.setPower(command);
+
+        // Return Value
+        return command > 0;
     }
 
     public static boolean score_flap_rotate_to_position (double position) {

@@ -31,14 +31,12 @@ public class Teleop extends OpMode{
     public void loop() {
         // Tank Drive Using Base Joystick Commands
         if (gamepad1.right_stick_y > 0.1 || gamepad1.right_stick_y < -0.1 || gamepad1.left_stick_y < -0.1 || gamepad1.left_stick_y > 0.1) {
-            Base.drive_by_command(gamepad1.right_stick_y, gamepad1.left_stick_y);
-            if (Base.drive_by_command(gamepad1.right_stick_y, gamepad1.left_stick_y)) {
+            if (Base.drive_by_command(-gamepad1.right_stick_y, -gamepad1.left_stick_y)) {
                 telemetry.addData("Base: ", "Success - Driving by Joysticks");
             } else {
                 telemetry.addData("Base: ", "Error - Not Driving");
             }
         } else {
-            Base.drive_by_command(0, 0);
             if (Base.drive_by_command(0, 0)) {
                 telemetry.addData("Base: ", "Stopped");
             } else {
@@ -47,12 +45,11 @@ public class Teleop extends OpMode{
         }
 
         // Collector Controls Using Base Bumpers
-        if (gamepad2.right_bumper) {
+        if (gamepad1.y) {
             Collector.collect();
-        } else if (gamepad2.left_bumper) {
+        } else if (gamepad1.b) {
             Collector.eject();
         } else if (gamepad1.right_bumper) {
-            Collector.collect();
             Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
             if (Collector.collect()) {
                 telemetry.addData("Collector: ", "Success - Collecting");
@@ -60,7 +57,6 @@ public class Teleop extends OpMode{
                 telemetry.addData("Collector: ", "Error - Failed to Collect");
             }
         } else if (gamepad1.left_bumper) {
-            Collector.eject();
             Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
             if (Collector.eject()) {
                 telemetry.addData("Collector: ", "Success - Ejecting");
@@ -71,7 +67,6 @@ public class Teleop extends OpMode{
             Collector.hold();
             Collector.rotate_to_position(Presets.COLLECTOR_SORT_POSITION);
         } else {
-            Collector.hold();
             if (Collector.hold()) {
                 telemetry.addData("Collector: ", "Holding Position");
             } else {
@@ -79,7 +74,7 @@ public class Teleop extends OpMode{
             }
         }
 
-        // Extender Controls Using Tower Right Joystick Command and Tower Buttons
+        // Extender Controls Using Base Trigger Commands
         if (gamepad1.right_trigger > 0.1) {
             if (Extender.extend_by_command(gamepad1.right_trigger)) {
                 telemetry.addData("Extender: ", "Driving Using Joystick");
@@ -93,7 +88,7 @@ public class Teleop extends OpMode{
                     telemetry.addData("Extender: ", "Stopped");
                 }
         } else {
-            if (Extender.extend_hold()) {
+            if (Extender.extend_stop()) {
                 telemetry.addData("Extender: ", "Holding Position");
             } else {
                 telemetry.addData("Extender: ", "Not Holding Position");
@@ -102,7 +97,7 @@ public class Teleop extends OpMode{
 
         // Lift Controls Using Tower Left Joystick Command and D-Pad
         if (gamepad2.right_stick_y > 0.1 || gamepad2.right_stick_y < -0.1) {
-            if (Lift.lift_by_command(gamepad2.right_stick_y)) {
+            if (Lift.lift_by_command(-gamepad2.right_stick_y)) {
                 telemetry.addData("Lift: ", "Driving Using Joystick");
             } else {
                 telemetry.addData("Lift: ", "Stopped");
@@ -136,9 +131,13 @@ public class Teleop extends OpMode{
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
         } else if (gamepad2.y) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
-        }else if (gamepad2.a) {
+        } else if (gamepad2.a) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
         }
+        telemetry.addData("Lift: ", "%6.2f", robot.right_lift.getCurrentPosition());
+        telemetry.addData("Extender: ", "%6.2f", robot.right_extend.getCurrentPosition());
+        telemetry.addData("Rt Trigger: ", "%6.2f", gamepad1.right_trigger);
+
         telemetry.update();
     }
 
@@ -149,7 +148,6 @@ public class Teleop extends OpMode{
         telemetry.addData("Subsystem States:", "");
 
         // Stop Base and Send Error Message if Base Fails to Stop Completely
-        Base.drive_stop();
         if (!Base.drive_stop()) {
             telemetry.addData("Base: ","Error - Not Stopped");
         } else {
@@ -157,7 +155,6 @@ public class Teleop extends OpMode{
         }
 
         // Retract Extender and Send Error Message if Extender Fails to Retract Fully
-        Extender.extend_stop();
         if (!Extender.extend_stop()) {
             telemetry.addData("Extender: ", "Error - Not Retracted");
         } else {
@@ -165,7 +162,6 @@ public class Teleop extends OpMode{
         }
 
         // Lower Lift and Send Error Message if Lift Fails to Lower Fully
-        Lift.lift_stop();
         if (!Lift.lift_stop()) {
             telemetry.addData("Lift: ", "Error - Not Retracted");
         } else {
@@ -173,7 +169,6 @@ public class Teleop extends OpMode{
         }
 
         // Stop Collector and Send Error Message if Collector Fails to Stop Completely
-        Collector.collect_stop();
         if (!Collector.collect_stop()) {
             telemetry.addData("Collector: ", "Error - Not Stopped");
         } else {
