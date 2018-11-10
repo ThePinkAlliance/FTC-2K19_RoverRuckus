@@ -19,7 +19,7 @@ public class Hardware {
     public Servo score_right_rotate;
     public Servo score_flap;
     public Servo collector_rotate;
-
+    public Servo hook;
     // Local OpMode Members
     HardwareMap hwMap = null;
 
@@ -84,5 +84,6 @@ public class Hardware {
         score_right_rotate = hwMap.get(Servo.class, "right_score_rotate");
         score_flap = hwMap.get(Servo.class, "score_flap");
         collector_rotate = hwMap.get(Servo.class, "collector_rotate");
+        hook = hwMap.get(Servo.class, "hook");
     }
 }

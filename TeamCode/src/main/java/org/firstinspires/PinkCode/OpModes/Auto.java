@@ -17,6 +17,8 @@ import org.firstinspires.PinkCode.Subsystems.Scorer;
 import static org.firstinspires.PinkCode.OpModes.Auto.auto_picker.side;
 import static org.firstinspires.PinkCode.OpModes.Auto.auto_picker.center;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.center_initialize;
+import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.continuous_score;
+import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.release;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_left;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_middle;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_right;
@@ -158,20 +160,27 @@ public class Auto extends OpMode {
                 telemetry.update();
         }
     }
-
     public void loop() {
         // Center Auto Switch Statement
         switch (center_auto) {
             case center_stop:
                 // Does Nothing Until center_auto is set to center_initialize
+                center_auto = center_initialize;
+                break;
+
             case center_initialize:
                 //Reset All Encoders
                 //Scan for gold cube
+                center_auto = release;
+                break;
+
             case release:
+                //Releases robot from lander
                 telemetry.addData("Status","Releasing robot");
                 telemetry.update();
-
-
+                //releases hook holding robot up
+                robot.hook.setPosition(-1);
+                //for 3 seconds causes the robot to slowly release from the lander
                 for (i = 0; i < 146000; i++)
                 {
                     Lift.lift_to_position(Presets.LIFT_RELEASE_BREAK);
@@ -179,6 +188,7 @@ public class Auto extends OpMode {
                     Lift.lift_to_position(Presets.LIFT_RELEASE_POSITION);
 
             case scan:
+                //Scans area for gold cube
                 telemetry.addData("Status", "Scanning for Cube");
                 telemetry.update();
                 //TODO: Scan for Gold Cube
@@ -187,26 +197,32 @@ public class Auto extends OpMode {
                     telemetry.addData("Status", "Scanned Left");
                     telemetry.update();
                     center_auto = scan_left;
+                    break;
                 }
                 else if (right)
                 {
                     telemetry.addData("Status", "Scanned Right");
                     telemetry.update();
                     center_auto = scan_right;
+                    break;
                 }
-                else if(Center)
+                else if(!Center)
                 {
                     telemetry.addData("Status", "Scanned Middle");
                     telemetry.update();
                     center_auto = scan_middle;
+                    break;
                 }
                 else
                 {
                     telemetry.addData("Status", "Nothing Scanned");
                     telemetry.update();
                     center_auto = score_and_set;
+                    break;
                 }
+
                      case scan_left:
+                         //If left area is gold cube
                         telemetry.addData("Status", "Scanning for left");
                         telemetry.update();
                         //Turn to the left
@@ -218,8 +234,11 @@ public class Auto extends OpMode {
                          Collector.collect();
                          Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
                          Collector.eject();
+                        center_auto = score_and_set;
+                        break;
 
                     case scan_right:
+                        //if right are is gold cube
                         telemetry.addData("Status", "Scanning for right");
                         telemetry.update();
                         //Turn to the right
@@ -231,8 +250,11 @@ public class Auto extends OpMode {
                         Collector.collect();
                         Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
                         Collector.eject();
+                        center_auto = score_and_set;
+                        break;
 
                     case scan_middle:
+                        //If gold cube is centered
                         telemetry.addData("Status", "Scanning for middle");
                         telemetry.update();
                         //Extend to gold cube
@@ -241,28 +263,37 @@ public class Auto extends OpMode {
                         Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
                         Collector.collect();
                         Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
-                        Collector.eject();
+                        center_auto = score_and_set;
 
                     case score_and_set:
+                        //Scores material from sample and sets all motors to desired location
                         telemetry.addData("Status", "Scoring and Setting");
                         telemetry.update();
                         //Score cube and set collector to just outside the crater
+                        Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
                         Extender.extend_to_position(Presets.EXTEND_SORT_POSITION);
+                        Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
                         Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
                         Scorer.score_rotate_to_position(Presets.SCORER_SCORE);
-                        Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
-                        if (runTime < 30)
+                        if (runTime < 3000000)
                         {
                             Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
                             while(flag)
-                            if(robot.left_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION && robot.right_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION)
-                            {
-                                Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
-                                flag = false;
-                            }
+                                if(robot.left_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION && robot.right_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION)
+                                {
+                                    Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
+                                    flag = false;
+                                }
                         }
+
+                        Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
+
+                        center_auto = continuous_score;
+                        break;
                         //While Loop for continuous scoring
+
                     case continuous_score:
+                        //Continuously scores materials into lander
                         telemetry.addData("Status", "Continuous Scoring");
                         telemetry.update();
                         while (Cycle) {
@@ -312,16 +343,16 @@ public class Auto extends OpMode {
                                        Extender.extend_hold();
                                    }
                                }
+                               Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
                                 Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
                                 Scorer.score_rotate_to_position(Presets.SCORER_SCORE);
-                                Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
-                                if (runTime < 30)
+                                if (runTime < 3000000)
                                 {
                                     Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
                                     while(flag)
                                         if(robot.left_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION && robot.right_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION)
                                         {
-                                            Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
+                                            Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
                                             flag = false;
                                         }
                                 }
@@ -336,6 +367,7 @@ public class Auto extends OpMode {
             case side_initialize:
                 //Set everything to correct positions
             case scan:
+                //scans for gold cube
                 telemetry.addData("Status", "Scanning for Cube");
                 telemetry.update();
                 //TODO: Scan for gold cube
@@ -352,6 +384,7 @@ public class Auto extends OpMode {
                     center_auto = scan_middle;
                 }
             case scan_left:
+                //if gold cube is left
                 telemetry.addData("Status", "Scanning for left");
                 telemetry.update();
                 //Turn to the left
@@ -364,6 +397,7 @@ public class Auto extends OpMode {
                 Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
                 Collector.eject();
             case scan_right:
+                //if gold cube is right
                 telemetry.addData("Status", "Scanning for right");
                 telemetry.update();
                 //Turn to the right
@@ -376,6 +410,7 @@ public class Auto extends OpMode {
                 Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
                 Collector.eject();
             case scan_middle:
+                //if gold cube is centered
                 telemetry.addData("Status", "Scanning for middle");
                 telemetry.update();
                 //Extend to gold cube
@@ -386,6 +421,7 @@ public class Auto extends OpMode {
                 Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
                 Collector.eject();
             case score_and_set:
+                //Scores sample material and sets functions to desired location
                 telemetry.addData("Status", "Scoring and Setting");
                 telemetry.update();
                 //Score cube and set collector to just outside the crater
@@ -393,7 +429,7 @@ public class Auto extends OpMode {
                 Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
                 Scorer.score_rotate_to_position(Presets.SCORER_SCORE);
                 Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
-                if (runTime < 30) {
+                if (runTime < 300000) {
                     Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
                     while (flag)
                         if (robot.left_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION && robot.right_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION) {
@@ -402,6 +438,7 @@ public class Auto extends OpMode {
                         }
                 }
             case score:
+                //Scores into the lander once and parks next to lander
                 telemetry.addData("Status", "Scoring");
                 telemetry.update();
                 //Drive forward

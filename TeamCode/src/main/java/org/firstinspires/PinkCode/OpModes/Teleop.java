@@ -106,15 +106,19 @@ public class Teleop extends OpMode{
             Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
         } else if(gamepad2.a) {
             Lift.lift_to_position(Presets.LIFT_TRAVEL_POSITION);
-        } else if (gamepad1.dpad_up && !tower_dpad_pressed_up) {
-            tower_dpad_pressed_up = true;
-            Collector.rotate_to_position(robot.collector_rotate.getPosition() + 0.1);
-        } else if (gamepad1.dpad_down && !tower_dpad_pressed_down) {
-            tower_dpad_pressed_down = true;
-            Collector.rotate_to_position(robot.collector_rotate.getPosition() + 0.1);
+        }
+
+        if (gamepad1.dpad_up) {
+            Scorer.score_rotate_to_position(robot.score_left_rotate.getPosition() + 0.01);
+        } else if (gamepad1.dpad_down) {
+            Scorer.score_rotate_to_position(robot.score_left_rotate.getPosition() - 0.01);
         } else {
             tower_dpad_pressed_up = false;
             tower_dpad_pressed_down = false;
+            telemetry.clear();
+            telemetry.addData("Score Left Rotate", robot.score_left_rotate.getPosition());
+            telemetry.addData("Score Right Rotate", robot.score_right_rotate.getPosition());
+            telemetry.update();
         }
 
         // Tower Bucket Controls
@@ -149,30 +153,30 @@ public class Teleop extends OpMode{
 
         // Stop Base and Send Error Message if Base Fails to Stop Completely
         if (!Base.drive_stop()) {
-            telemetry.addData("Base: ","Error - Not Stopped");
+            //telemetry.addData("Base: ","Error - Not Stopped");
         } else {
-            telemetry.addData("Base: ", "Success - Stopped");
+            //telemetry.addData("Base: ", "Success - Stopped");
         }
 
         // Retract Extender and Send Error Message if Extender Fails to Retract Fully
         if (!Extender.extend_stop()) {
-            telemetry.addData("Extender: ", "Error - Not Retracted");
+            //telemetry.addData("Extender: ", "Error - Not Retracted");
         } else {
-            telemetry.addData("Extender: ", "Success - Retracted");
+            //telemetry.addData("Extender: ", "Success - Retracted");
         }
 
         // Lower Lift and Send Error Message if Lift Fails to Lower Fully
         if (!Lift.lift_stop()) {
-            telemetry.addData("Lift: ", "Error - Not Retracted");
+            //telemetry.addData("Lift: ", "Error - Not Retracted");
         } else {
-            telemetry.addData("Lift: ", "Success - Retracted");
+            //telemetry.addData("Lift: ", "Success - Retracted");
         }
 
         // Stop Collector and Send Error Message if Collector Fails to Stop Completely
         if (!Collector.collect_stop()) {
-            telemetry.addData("Collector: ", "Error - Not Stopped");
+            //telemetry.addData("Collector: ", "Error - Not Stopped");
         } else {
-            telemetry.addData("Collector: ", "Success - Stopped");
+            //telemetry.addData("Collector: ", "Success - Stopped");
         }
 
         telemetry.update();

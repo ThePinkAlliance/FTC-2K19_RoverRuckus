@@ -50,7 +50,7 @@ public abstract class Collector {
     // Method to Rotate the Collector
     public static boolean rotate_to_position (double position) {
         // Define Commands
-        if ((robot.right_extend.getCurrentPosition() > Presets.EXTEND_SORT_POSITION) || (robot.right_lift.getCurrentPosition() > Presets.LIFT_SORT_POSITION)) {
+        if (robot.left_extend.getCurrentPosition() > Presets.EXTEND_SORT_POSITION || robot.right_extend.getCurrentPosition() > Presets.EXTEND_SORT_POSITION || robot.left_lift.getCurrentPosition() > Presets.LIFT_SORT_POSITION || robot.right_lift.getCurrentPosition() > Presets.LIFT_SORT_POSITION) {
             if (position > Presets.COLLECTOR_TRAVEL_POSITION) {
                 collect_rotate_target_position = Presets.COLLECTOR_TRAVEL_POSITION;
             } else {

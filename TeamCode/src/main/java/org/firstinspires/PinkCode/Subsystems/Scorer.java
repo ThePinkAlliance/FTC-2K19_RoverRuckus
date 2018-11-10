@@ -17,15 +17,15 @@ public abstract class Scorer {
     // Method for Rotating the Scoring Bucket to a Position
     public static boolean score_rotate_to_position (double position) {
         // Define Commands
-        if (robot.right_lift.getCurrentPosition() > Presets.LIFT_SCORE_POSITION || robot.left_lift.getCurrentPosition() > Presets.LIFT_SCORE_POSITION) {
-            if (position > Presets.SCORER_TRAVEL) {
-                score_target_position = Presets.SCORER_TRAVEL;
-            } else {
-                score_target_position = position;
-            }
-        } else {
+//        if (robot.right_lift.getCurrentPosition() > Presets.LIFT_SCORE_POSITION || robot.left_lift.getCurrentPosition() > Presets.LIFT_SCORE_POSITION) {
+//            if (position > Presets.SCORER_TRAVEL) {
+//                score_target_position = Presets.SCORER_TRAVEL;
+//            } else {
+//                score_target_position = position;
+//            }
+//        } else {
             score_target_position = position;
-        }
+//        }
         score_left_target_position = score_target_position;
         score_right_target_position = 1 - score_target_position;
 
