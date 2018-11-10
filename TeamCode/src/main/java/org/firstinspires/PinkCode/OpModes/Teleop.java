@@ -2,6 +2,8 @@ package org.firstinspires.PinkCode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.PinkCode.Robot.Presets;
 import org.firstinspires.PinkCode.Subsystems.Base;
@@ -156,6 +158,28 @@ public class Teleop extends OpMode{
         telemetry.addData("Lift Pos: ", "%1$d", robot.right_lift.getCurrentPosition());
         telemetry.addData("Extender Pos: ", "%1$d", robot.right_extend.getCurrentPosition());
 
+        telemetry.update();
+        //Ability to reset lift encoders
+        if (gamepad2.back){
+            telemetry.addData("Status", "Resetting encoders");
+            telemetry.update();
+            robot.right_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.left_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.right_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.left_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        else {
+            
+        }
+
+        if(gamepad1.dpad_left)
+        {
+            robot.hook.setPosition(robot.hook.getPosition() - 0.1);
+        }
+        else if (gamepad1.dpad_right) {
+            robot.hook.setPosition(robot.hook.getPosition() + 0.1);
+        }
+        telemetry.addData("Hook Position: ", robot.hook.getPosition());
         telemetry.update();
     }
 

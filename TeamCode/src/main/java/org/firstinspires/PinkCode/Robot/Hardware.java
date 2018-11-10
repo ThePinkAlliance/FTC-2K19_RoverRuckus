@@ -59,7 +59,7 @@ public class Hardware {
         left_lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // TODO: Confirm Motor Direction is Correct Before Running
-        right_drive.setDirection(DcMotor.Direction.FORWARD);
+        right_drive.setDirection(DcMotor.Direction.REVERSE);
         left_drive.setDirection(DcMotor.Direction.REVERSE);
         collect.setDirection(DcMotor.Direction.FORWARD);
         right_extend.setDirection(DcMotor.Direction.REVERSE);

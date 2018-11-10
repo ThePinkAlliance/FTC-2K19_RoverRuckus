@@ -19,8 +19,10 @@ public class AutoLand extends OpMode {
     public void init() {
         // Initialize Robot Hardware
         robot.init(hardwareMap);
+        robot.collector_rotate.setPosition(Presets.COLLECTOR_STOW_POSITION);
     }
         public void loop(){
+
         //Releases robot from lander
         telemetry.addData("Status","Releasing robot");
         telemetry.update();
@@ -29,7 +31,7 @@ public class AutoLand extends OpMode {
         //for 3 seconds causes the robot to slowly release from the lander
         for (i = 0; i < 146000; i++)
         {
-            Lift.lift_to_position(Presets.LIFT_RELEASE_BREAK);
+            Lift.lift_by_command(Presets.LIFT_RELEASE_BREAK);
         }
         Lift.lift_to_position(Presets.LIFT_RELEASE_POSITION);
         Base.drive_by_command(1,1);

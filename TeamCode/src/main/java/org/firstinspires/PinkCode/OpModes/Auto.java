@@ -19,6 +19,7 @@ import static org.firstinspires.PinkCode.OpModes.Auto.auto_picker.center;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.center_initialize;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.continuous_score;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.release;
+import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_left;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_middle;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_right;
@@ -70,8 +71,6 @@ public class Auto extends OpMode {
         return super.getRuntime();
     }
 
-    private static boolean Center = true;
-    private static boolean Side = true;
     private static boolean Cycle = true;
     private static boolean left = false;
     private static boolean middle = false;
@@ -86,6 +85,8 @@ public class Auto extends OpMode {
         // Initialize Robot Hardware
         robot.init(hardwareMap);
 
+        //Set servos to correct position
+        robot.collector_rotate.setPosition(Presets.COLLECTOR_STOW_POSITION);
         // Set Auto Program Starting Position
         if(Controls.base_x) {
             // Select Auto Program for Starting on the Side Facing the Depot
@@ -183,10 +184,11 @@ public class Auto extends OpMode {
                 //for 3 seconds causes the robot to slowly release from the lander
                 for (i = 0; i < 146000; i++)
                 {
-                    Lift.lift_to_position(Presets.LIFT_RELEASE_BREAK);
+                    Lift.lift_by_command(Presets.LIFT_RELEASE_BREAK);
                 }
                     Lift.lift_to_position(Presets.LIFT_RELEASE_POSITION);
-
+                center_auto = scan;
+                break;
             case scan:
                 //Scans area for gold cube
                 telemetry.addData("Status", "Scanning for Cube");
@@ -206,7 +208,7 @@ public class Auto extends OpMode {
                     center_auto = scan_right;
                     break;
                 }
-                else if(!Center)
+                else if(!middle)
                 {
                     telemetry.addData("Status", "Scanned Middle");
                     telemetry.update();
@@ -264,7 +266,7 @@ public class Auto extends OpMode {
                         Collector.collect();
                         Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
                         center_auto = score_and_set;
-
+                        break;
                     case score_and_set:
                         //Scores material from sample and sets all motors to desired location
                         telemetry.addData("Status", "Scoring and Setting");
