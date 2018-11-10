@@ -64,10 +64,10 @@ public class Teleop extends OpMode{
                 telemetry.addData("Collector: ", " Error - Failed to Eject");
             }
         } else if (gamepad2.b) {
-            Collector.hold();
+            Collector.collect_stop();
             Collector.rotate_to_position(Presets.COLLECTOR_SORT_POSITION);
         } else {
-            if (Collector.hold()) {
+            if (Collector.collect_stop()) {
                 telemetry.addData("Collector: ", "Holding Position");
             } else {
                 telemetry.addData("Collector: ", "Not Holding Position");
@@ -75,15 +75,15 @@ public class Teleop extends OpMode{
         }
 
         // Extender Controls Using Base Trigger Commands
-        if (gamepad1.right_trigger > 0.1) {
+        if (gamepad1.right_trigger > 0.05) {
             if (Extender.extend_by_command(gamepad1.right_trigger)) {
-                telemetry.addData("Extender: ", "Driving Using Joystick");
+                telemetry.addData("Extender: ", "Driving Using Trigger %1$.2f", gamepad1.right_trigger);
             } else {
                 telemetry.addData("Extender: ", "Stopped");
             }
-        } else if (gamepad1.left_trigger > 0.1) {
+        } else if (gamepad1.left_trigger > 0.05) {
                 if (Extender.extend_by_command(-gamepad1.left_trigger)) {
-                    telemetry.addData("Extender: ", "Driving Using Joystick");
+                    telemetry.addData("Extender: ", "Driving Using Trigger %1$.2f", gamepad1.left_trigger);
                 } else {
                     telemetry.addData("Extender: ", "Stopped");
                 }
@@ -96,26 +96,40 @@ public class Teleop extends OpMode{
         }
 
         // Lift Controls Using Tower Left Joystick Command and D-Pad
-        if (gamepad2.right_stick_y > 0.1 || gamepad2.right_stick_y < -0.1) {
+        if (gamepad2.right_stick_y > 0.05 || gamepad2.right_stick_y < -0.05) {
             if (Lift.lift_by_command(-gamepad2.right_stick_y)) {
-                telemetry.addData("Lift: ", "Driving Using Joystick");
+                telemetry.addData("Lift: ", "Driving Using Joystick %1$.2f", gamepad2.right_stick_y);
             } else {
                 telemetry.addData("Lift: ", "Stopped");
             }
         } else if(gamepad2.y){
             Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
-        } else if(gamepad2.a) {
-            Lift.lift_to_position(Presets.LIFT_TRAVEL_POSITION);
+        } else {
+            Lift.lift_stop();
         }
 
-        if (gamepad1.dpad_up) {
+        // Tower Bucket (Scorer) Rotate
+        if (gamepad2.left_stick_y > 0.05 || gamepad2.left_stick_y < -0.05) {
+            // y=Mx+b to convert 1 to -1 joy to 0 to 1 servo (y = -0.5X + 0.5)
+//            if (Scorer.score_rotate_by_command((-0.5*gamepad2.left_stick_y)+0.5)) {
+                if (Scorer.score_rotate_by_command(gamepad2.left_stick_y)) {
+                telemetry.addData("Tower Bucket: ", "Driving Using Joystick %1$.2f", (gamepad2.left_stick_y));
+            } else {
+                telemetry.addData("Tower Bucket: ", "Stopped");
+            }
+        } else {
+            Scorer.score_rotate_by_command(0);
+        }
+
+
+        /*        if (gamepad1.dpad_up) {
             Scorer.score_rotate_to_position(robot.score_left_rotate.getPosition() + 0.01);
         } else if (gamepad1.dpad_down) {
             Scorer.score_rotate_to_position(robot.score_left_rotate.getPosition() - 0.01);
         } else {
             tower_dpad_pressed_up = false;
             tower_dpad_pressed_down = false;
-            telemetry.clear();
+            //telemetry.clear();
             telemetry.addData("Score Left Rotate", robot.score_left_rotate.getPosition());
             telemetry.addData("Score Right Rotate", robot.score_right_rotate.getPosition());
             telemetry.update();
@@ -127,6 +141,7 @@ public class Teleop extends OpMode{
         } else if (gamepad2.dpad_left || gamepad2.a) {
             Scorer.score_rotate_to_position(Presets.SCORER_COLLECT);
         }
+*/
 
         //Tower Flap Controls
         if (gamepad2.right_bumper) {
@@ -135,12 +150,11 @@ public class Teleop extends OpMode{
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
         } else if (gamepad2.y) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
-        } else if (gamepad2.a) {
+        } else if ((gamepad2.a)|| (gamepad2.b)) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
         }
-        telemetry.addData("Lift: ", "%6.2f", robot.right_lift.getCurrentPosition());
-        telemetry.addData("Extender: ", "%6.2f", robot.right_extend.getCurrentPosition());
-        telemetry.addData("Rt Trigger: ", "%6.2f", gamepad1.right_trigger);
+        telemetry.addData("Lift Pos: ", "%1$d", robot.right_lift.getCurrentPosition());
+        telemetry.addData("Extender Pos: ", "%1$d", robot.right_extend.getCurrentPosition());
 
         telemetry.update();
     }

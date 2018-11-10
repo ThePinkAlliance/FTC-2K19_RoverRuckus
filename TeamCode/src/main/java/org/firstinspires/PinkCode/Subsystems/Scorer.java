@@ -30,11 +30,11 @@ public abstract class Scorer {
         score_right_target_position = 1 - score_target_position;
 
         // Set Servo Position
-        robot.score_left_rotate.setPosition(score_left_target_position);
-        robot.score_right_rotate.setPosition(score_right_target_position);
+        robot.score_left_rotate.setPower(score_left_target_position);
+        robot.score_right_rotate.setPower(score_right_target_position);
 
         // Return Value
-        return robot.score_left_rotate.getPosition() == score_left_target_position && robot.score_right_rotate.getPosition() == score_right_target_position;
+        return  robot.score_right_rotate.getPower() == score_right_target_position;
     }
 
     // Method for Rotating the Scoring Bucket Using Commands
@@ -42,11 +42,11 @@ public abstract class Scorer {
         // Define Commands
 
         // Set Motor Power
-        robot.right_lift.setPower(command);
-        robot.left_lift.setPower(command);
+        robot.score_left_rotate.setPower(-command);
+        robot.score_right_rotate.setPower(command);
 
         // Return Value
-        return command > 0;
+        return true;
     }
 
     public static boolean score_flap_rotate_to_position (double position) {

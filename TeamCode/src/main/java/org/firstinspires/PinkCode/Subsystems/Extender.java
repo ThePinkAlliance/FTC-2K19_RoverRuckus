@@ -22,16 +22,16 @@ public abstract class Extender {
 
         // Limit the motor power near the end of travel
         if (command > 0){
-            extend_command = Range.clip(command, 0, ((Presets.EXTEND_MAX_POSITION - robot.right_extend.getCurrentPosition())*0.1));
+            extend_command = Range.clip(command, 0, ((Presets.EXTEND_MAX_POSITION - robot.right_extend.getCurrentPosition())*0.005));
         } else {
-            extend_command = Range.clip(command,((robot.right_extend.getCurrentPosition()-Presets.EXTEND_MIN_POSITION)*0.1), 0);
+            extend_command = Range.clip(command,((Presets.EXTEND_MIN_POSITION - robot.right_extend.getCurrentPosition())*0.005), 0);
         }
         // Set Motor Power
         robot.right_extend.setPower(extend_command);
         robot.left_extend.setPower(extend_command);
 
         // Return Value
-        return extend_command > 0;
+        return true;
     }
 
     // Method for Extending to a Position
@@ -74,6 +74,6 @@ public abstract class Extender {
         robot.left_extend.setPower(0);
 
         // Return Value
-        return robot.right_extend.getPower() == 0 && robot.left_extend.getPower() == 0;
+        return robot.right_extend.getPower() == 0;
     }
 }

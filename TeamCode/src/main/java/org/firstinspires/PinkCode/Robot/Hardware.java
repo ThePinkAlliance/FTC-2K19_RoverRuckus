@@ -1,8 +1,11 @@
 package org.firstinspires.PinkCode.Robot;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 // Class to Define the Hardware of the Robot
 public class Hardware {
@@ -15,11 +18,12 @@ public class Hardware {
     public DcMotor right_lift; // Port 2 Expansion Hub 1
     public DcMotor left_lift; // Port 2 Expansion Hub 2
     // Servos
-    public Servo score_left_rotate;
-    public Servo score_right_rotate;
+    public CRServo score_left_rotate;
+    public CRServo score_right_rotate;
     public Servo score_flap;
     public Servo collector_rotate;
     public Servo hook;
+
     // Local OpMode Members
     HardwareMap hwMap = null;
 
@@ -57,9 +61,9 @@ public class Hardware {
         // TODO: Confirm Motor Direction is Correct Before Running
         right_drive.setDirection(DcMotor.Direction.FORWARD);
         left_drive.setDirection(DcMotor.Direction.REVERSE);
-        collect.setDirection(DcMotor.Direction.REVERSE);
-        right_extend.setDirection(DcMotor.Direction.FORWARD);
-        left_extend.setDirection(DcMotor.Direction.REVERSE);
+        collect.setDirection(DcMotor.Direction.FORWARD);
+        right_extend.setDirection(DcMotor.Direction.REVERSE);
+        left_extend.setDirection(DcMotor.Direction.FORWARD);
         right_lift.setDirection(DcMotor.Direction.FORWARD);
         left_lift.setDirection(DcMotor.Direction.REVERSE);
 
@@ -80,8 +84,8 @@ public class Hardware {
         left_lift.setPower(0);
 
         // Servos
-        score_left_rotate = hwMap.get(Servo.class, "left_score_rotate");
-        score_right_rotate = hwMap.get(Servo.class, "right_score_rotate");
+        score_left_rotate = hwMap.get(CRServo.class, "score_left_rotate");
+        score_right_rotate = hwMap.get(CRServo.class, "score_right_rotate");
         score_flap = hwMap.get(Servo.class, "score_flap");
         collector_rotate = hwMap.get(Servo.class, "collector_rotate");
         hook = hwMap.get(Servo.class, "hook");
