@@ -19,15 +19,15 @@ public abstract class Lift {
 
     // Method for Raising/Lowering the Lift Using Commands
     public static boolean lift_by_command (double command) {
-        // Define Commands
-        lift_hold_position = robot.right_lift.getCurrentPosition();
-        if (command > 0){
-            lift_command = Range.clip(command, 0, ((Presets.LIFT_MAX_POSITION - lift_hold_position)*0.01));
-        } else {
-            lift_command = Range.clip(command,((Presets.LIFT_MIN_POSITION-lift_hold_position)*0.002), 0);
-        }
+//        // Define Commands
+//        lift_hold_position = robot.right_lift.getCurrentPosition();
+//        if (command > 0){
+//            lift_command = Range.clip(command, 0, ((Presets.LIFT_MAX_POSITION - lift_hold_position)*0.01));
+//        } else {
+//            lift_command = Range.clip(command,((Presets.LIFT_MIN_POSITION-lift_hold_position)*0.002), 0);
+//        }
 
-        lift_command = Range.clip(lift_command, -1, 0.6);
+        lift_command = Range.clip(command, -1, 0.6);
         // Set Motor Power
         robot.right_lift.setPower(lift_command);
         robot.left_lift.setPower(lift_command);

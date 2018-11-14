@@ -15,14 +15,13 @@ public class AutoLand extends OpMode {
     private static int i = 0;
     public Hardware robot = new Hardware();
 
-
     public void init() {
         // Initialize Robot Hardware
         robot.init(hardwareMap);
-        robot.collector_rotate.setPosition(Presets.COLLECTOR_STOW_POSITION);
+
     }
         public void loop(){
-
+        robot.collector_rotate.setPosition(Presets.COLLECTOR_STOW_POSITION);
         //Releases robot from lander
         telemetry.addData("Status","Releasing robot");
         telemetry.update();

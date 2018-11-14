@@ -27,6 +27,8 @@ public class Teleop extends OpMode{
         Extender.robot.init(hardwareMap);
         Lift.robot.init(hardwareMap);
         Scorer.robot.init(hardwareMap);
+
+
     }
 
     // Code to Run Constantly While the Program is Running
