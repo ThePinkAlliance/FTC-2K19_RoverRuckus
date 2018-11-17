@@ -4,12 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.PinkCode.Robot.Hardware;
-import org.firstinspires.PinkCode.Robot.Presets;
+import org.firstinspires.PinkCode.Calculations.Presets;
 import org.firstinspires.PinkCode.Subsystems.Base;
 import org.firstinspires.PinkCode.Subsystems.Extender;
 import org.firstinspires.PinkCode.Subsystems.Lift;
 
-@Autonomous (name="Land & Park", group="Autonomous")
+@Autonomous (name="Land and Extend to Park", group="Autonomous")
 public class AutoLand extends OpMode {
 
     private static int i = 0;

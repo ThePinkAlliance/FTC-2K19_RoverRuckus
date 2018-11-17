@@ -1,187 +1,103 @@
 package org.firstinspires.PinkCode.OpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.PinkCode.Robot.Presets;
+import org.firstinspires.PinkCode.Calculations.Average;
+import org.firstinspires.PinkCode.Calculations.Presets;
+import org.firstinspires.PinkCode.Robot.Controls;
 import org.firstinspires.PinkCode.Subsystems.Base;
 import org.firstinspires.PinkCode.Subsystems.Collector;
 import org.firstinspires.PinkCode.Subsystems.Extender;
 import org.firstinspires.PinkCode.Subsystems.Lift;
 import org.firstinspires.PinkCode.Subsystems.Scorer;
 
-import static org.firstinspires.PinkCode.Subsystems.Collector.robot;
-
 // Class for Player-Controlled Period of the Game Which Binds Controls to Subsystems
 @TeleOp(name = "Teleop", group = "Teleop")
-public class Teleop extends OpMode{
-    public boolean tower_start_pressed;
-    public boolean tower_dpad_pressed_up;
-    public boolean tower_dpad_pressed_down;
+public class Teleop extends Controls {
     // Code to Run Once When the Driver Hits Init
     public void init() {
+        // Initialization of Each Subsystem's Hardware Map
         Base.robot.init(hardwareMap);
-        robot.init(hardwareMap);
+        Collector.robot.init(hardwareMap);
         Extender.robot.init(hardwareMap);
         Lift.robot.init(hardwareMap);
         Scorer.robot.init(hardwareMap);
-
-
     }
 
     // Code to Run Constantly While the Program is Running
     public void loop() {
-        // Tank Drive Using Base Joystick Commands
-        if (gamepad1.right_stick_y > 0.1 || gamepad1.right_stick_y < -0.1 || gamepad1.left_stick_y < -0.1 || gamepad1.left_stick_y > 0.1) {
-            if (Base.drive_by_command(-gamepad1.right_stick_y, -gamepad1.left_stick_y)) {
-                telemetry.addData("Base: ", "Success - Driving by Joysticks");
-            } else {
-                telemetry.addData("Base: ", "Error - Not Driving");
-            }
-        } else {
-            if (Base.drive_by_command(0, 0)) {
-                telemetry.addData("Base: ", "Stopped");
-            } else {
-                telemetry.addData("Base: ", "Not Stopped");
-            }
-        }
+        // Drive Train Control
+        Base.drive_by_command(base_right_joystick(-0.5, 0.5), base_left_joystick(-0.5, 0.5));
 
-        // Collector Controls Using Base Bumpers
-        if (gamepad1.y) {
+        // Collector Controls
+        if (base_y(false)) {
             Collector.collect();
-        } else if (gamepad1.b) {
+        } else if (base_b(false)) {
             Collector.eject();
-        } else if (gamepad1.right_bumper) {
+        } else if (base_right_bumper(false)) {
+            Collector.collect();
             Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
-            if (Collector.collect()) {
-                telemetry.addData("Collector: ", "Success - Collecting");
-            } else {
-                telemetry.addData("Collector: ", "Error - Failed to Collect");
-            }
-        } else if (gamepad1.left_bumper) {
+        } else if (base_left_bumper(false)) {
+            Collector.eject();
             Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
-            if (Collector.eject()) {
-                telemetry.addData("Collector: ", "Success - Ejecting");
-            } else {
-                telemetry.addData("Collector: ", " Error - Failed to Eject");
-            }
-        } else if (gamepad2.b) {
+        } else if (tower_b(false)) {
             Collector.collect_stop();
             Collector.rotate_to_position(Presets.COLLECTOR_SORT_POSITION);
         } else {
-            if (Collector.collect_stop()) {
-                telemetry.addData("Collector: ", "Holding Position");
-            } else {
-                telemetry.addData("Collector: ", "Not Holding Position");
-            }
+            Collector.collect_stop();
         }
+        // Extender Controls
+        Extender.extend_by_command(base_right_trigger(0, 0.5));
+        Extender.extend_by_command(base_left_trigger(0, 0.5));
 
-        // Extender Controls Using Base Trigger Commands
-        if (gamepad1.right_trigger > 0.05) {
-            if (Extender.extend_by_command(gamepad1.right_trigger)) {
-                telemetry.addData("Extender: ", "Driving Using Trigger %1$.2f", gamepad1.right_trigger);
-            } else {
-                telemetry.addData("Extender: ", "Stopped");
-            }
-        } else if (gamepad1.left_trigger > 0.05) {
-                if (Extender.extend_by_command(-gamepad1.left_trigger)) {
-                    telemetry.addData("Extender: ", "Driving Using Trigger %1$.2f", gamepad1.left_trigger);
-                } else {
-                    telemetry.addData("Extender: ", "Stopped");
-                }
-        } else {
-            if (Extender.extend_stop()) {
-                telemetry.addData("Extender: ", "Holding Position");
-            } else {
-                telemetry.addData("Extender: ", "Not Holding Position");
-            }
-        }
-
-        // Lift Controls Using Tower Left Joystick Command and D-Pad
-        if (gamepad2.right_stick_y > 0.05 || gamepad2.right_stick_y < -0.05) {
-            if (Lift.lift_by_command(-gamepad2.right_stick_y)) {
-                telemetry.addData("Lift: ", "Driving Using Joystick %1$.2f", gamepad2.right_stick_y);
-            } else {
-                telemetry.addData("Lift: ", "Stopped");
-            }
-        } else if(gamepad2.y){
+        // Lift Controls
+        Lift.lift_by_command(tower_right_joystick(-0.5, 0.5));
+        if (tower_back(false)){
+            Lift.robot.right_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            Lift.robot.left_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            Lift.robot.right_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            Lift.robot.left_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        } else if(tower_y(false)){
             Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
         } else {
-            Lift.lift_stop();
+            Lift.lift_hold();
         }
 
-        // Tower Bucket (Scorer) Rotate
-        if (gamepad2.left_stick_y > 0.05 || gamepad2.left_stick_y < -0.05) {
-            // y=Mx+b to convert 1 to -1 joy to 0 to 1 servo (y = -0.5X + 0.5)
-//            if (Scorer.score_rotate_by_command((-0.5*gamepad2.left_stick_y)+0.5)) {
-                if (Scorer.score_rotate_by_command(gamepad2.left_stick_y)) {
-                telemetry.addData("Tower Bucket: ", "Driving Using Joystick %1$.2f", (gamepad2.left_stick_y));
-            } else {
-                telemetry.addData("Tower Bucket: ", "Stopped");
-            }
-        } else {
-            Scorer.score_rotate_by_command(0);
-        }
-
-
-        /*        if (gamepad1.dpad_up) {
-            Scorer.score_rotate_to_position(robot.score_left_rotate.getPosition() + 0.01);
-        } else if (gamepad1.dpad_down) {
-            Scorer.score_rotate_to_position(robot.score_left_rotate.getPosition() - 0.01);
-        } else {
-            tower_dpad_pressed_up = false;
-            tower_dpad_pressed_down = false;
-            //telemetry.clear();
-            telemetry.addData("Score Left Rotate", robot.score_left_rotate.getPosition());
-            telemetry.addData("Score Right Rotate", robot.score_right_rotate.getPosition());
-            telemetry.update();
-        }
-
-        // Tower Bucket Controls
-        if (gamepad2.dpad_right || gamepad2.y) {
+        // Scorer Controls
+        // y=Mx+b to convert 1 to -1 joy to 0 to 1 servo (y = -0.5X + 0.5)
+        Scorer.score_rotate_by_command((-0.5*tower_left_joystick(-0.5, 0.5))+0.5);
+        if (tower_dpad_right(false) || tower_y(false)) {
             Scorer.score_rotate_to_position(Presets.SCORER_SCORE);
-        } else if (gamepad2.dpad_left || gamepad2.a) {
+        } else if (tower_dpad_left(false) || tower_a(false)) {
             Scorer.score_rotate_to_position(Presets.SCORER_COLLECT);
         }
-*/
 
         //Tower Flap Controls
-        if (gamepad2.right_bumper) {
+        if (tower_right_bumper(false)) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
-        } else if (gamepad2.left_bumper) {
+        } else if (tower_left_bumper(false)) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
-        } else if (gamepad2.y) {
+        } else if (tower_y(false)) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
-        } else if ((gamepad2.a)|| (gamepad2.b)) {
+        } else if (tower_a(false) || tower_b(false)) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
-        }
-        telemetry.addData("Lift Pos: ", "%1$d", robot.right_lift.getCurrentPosition());
-        telemetry.addData("Extender Pos: ", "%1$d", robot.right_extend.getCurrentPosition());
-
-        telemetry.update();
-        //Ability to reset lift encoders
-        if (gamepad2.back){
-            telemetry.addData("Status", "Resetting encoders");
-            telemetry.update();
-            robot.right_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.left_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.right_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.left_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-        else {
-            
         }
 
-        if(gamepad1.dpad_left)
-        {
-            robot.hook.setPosition(robot.hook.getPosition() - 0.1);
-        }
-        else if (gamepad1.dpad_right) {
-            robot.hook.setPosition(robot.hook.getPosition() + 0.1);
-        }
-        telemetry.addData("Hook Position: ", robot.hook.getPosition());
+        // Add Telemetry to Phone for Debugging and Testing
+        telemetry.addData("Powers: ","");
+        telemetry.addData("Base Right Power: ", Base.robot.right_drive.getPower());
+        telemetry.addData("Base Left Power: ", Base.robot.left_drive.getPower());
+        telemetry.addData("Collector Power: ", Collector.robot.collect.getPower());
+        telemetry.addData("Extender Arm Power: ", Average.two_values(Extender.robot.right_extend.getPower(), Extender.robot.left_extend.getPower()));
+        telemetry.addData("Lift Power: ", Average.two_values(Lift.robot.right_lift.getPower(), Lift.robot.left_lift.getPower()));
+        telemetry.addData("Scorer Rotate Power: ", Average.two_values(Scorer.robot.score_right_rotate.getPower(), Scorer.robot.score_left_rotate.getPower()));
+        telemetry.addData("Positions: ","");
+        telemetry.addData("Base Right Position: ", Base.robot.right_drive.getCurrentPosition());
+        telemetry.addData("Base Left Position: ", Base.robot.left_drive.getCurrentPosition());
+        telemetry.addData("Collector Rotate Target Position: ", Collector.robot.collector_rotate.getPosition());
+        telemetry.addData("Extender Arm Position: ", Average.two_values(Extender.robot.right_lift.getCurrentPosition(), Extender.robot.left_extend.getCurrentPosition()));
+        telemetry.addData("Lift Position: ", Average.two_values(Lift.robot.right_lift.getCurrentPosition(), Lift.robot.left_lift.getCurrentPosition()));
         telemetry.update();
     }
 
@@ -193,30 +109,30 @@ public class Teleop extends OpMode{
 
         // Stop Base and Send Error Message if Base Fails to Stop Completely
         if (!Base.drive_stop()) {
-            //telemetry.addData("Base: ","Error - Not Stopped");
+            telemetry.addData("Base: ","Error - Not Stopped");
         } else {
-            //telemetry.addData("Base: ", "Success - Stopped");
+            telemetry.addData("Base: ", "Success - Stopped");
         }
 
         // Retract Extender and Send Error Message if Extender Fails to Retract Fully
         if (!Extender.extend_stop()) {
-            //telemetry.addData("Extender: ", "Error - Not Retracted");
+            telemetry.addData("Extender: ", "Error - Not Retracted");
         } else {
-            //telemetry.addData("Extender: ", "Success - Retracted");
+            telemetry.addData("Extender: ", "Success - Retracted");
         }
 
         // Lower Lift and Send Error Message if Lift Fails to Lower Fully
         if (!Lift.lift_stop()) {
-            //telemetry.addData("Lift: ", "Error - Not Retracted");
+            telemetry.addData("Lift: ", "Error - Not Retracted");
         } else {
-            //telemetry.addData("Lift: ", "Success - Retracted");
+            telemetry.addData("Lift: ", "Success - Retracted");
         }
 
         // Stop Collector and Send Error Message if Collector Fails to Stop Completely
         if (!Collector.collect_stop()) {
-            //telemetry.addData("Collector: ", "Error - Not Stopped");
+            telemetry.addData("Collector: ", "Error - Not Stopped");
         } else {
-            //telemetry.addData("Collector: ", "Success - Stopped");
+            telemetry.addData("Collector: ", "Success - Stopped");
         }
 
         telemetry.update();
