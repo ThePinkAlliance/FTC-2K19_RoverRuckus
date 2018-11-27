@@ -246,7 +246,7 @@ public class Auto extends OpMode {
                                 Collector.eject();
                                 flag = false;
                             } else {
-                                Collector.hold();
+                                Collector.collect_stop();
                             }
                         //move collector back, sort, and score
                         while (!flag) {
