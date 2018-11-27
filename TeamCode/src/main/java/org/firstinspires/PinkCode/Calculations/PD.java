@@ -1,4 +1,4 @@
-package org.firstinspires.PinkCode.Robot;
+package org.firstinspires.PinkCode.Calculations;
 
 import com.qualcomm.robotcore.util.Range;
 

@@ -1,8 +1,7 @@
 package org.firstinspires.PinkCode.Subsystems;
 
-import org.firstinspires.PinkCode.OpModes.Teleop;
 import org.firstinspires.PinkCode.Robot.Hardware;
-import org.firstinspires.PinkCode.Robot.Presets;
+import org.firstinspires.PinkCode.Calculations.Presets;
 
 // Abstract Class to Define the Methods of the Collector Subsystem
 public abstract class Collector {
@@ -35,18 +34,6 @@ public abstract class Collector {
         return collect_command == -1;
     }
 
-    // Default Method for Collector
-    public static boolean hold () {
-        // Define Commands
-        collect_command = Presets.COLLECTOR_HOLD_POWER;
-
-        // Set Motor Power
-        robot.collect.setPower(collect_command);
-
-        // Return Value
-        return collect_command == 0;
-    }
-
     // Method to Rotate the Collector
     public static boolean rotate_to_position (double position) {
         // Define Commands
@@ -61,18 +48,6 @@ public abstract class Collector {
         }
 */
         collect_rotate_target_position = position;
-
-        // Set Servo Position
-        robot.collector_rotate.setPosition(collect_rotate_target_position);
-
-        // Return Value
-        return robot.collector_rotate.getPosition() == collect_rotate_target_position;
-    }
-
-    // Method to Hold Collector Rotation
-    public static boolean rotate_hold () {
-        // Define Commands
-        collect_rotate_target_position = robot.collector_rotate.getPosition();
 
         // Set Servo Position
         robot.collector_rotate.setPosition(collect_rotate_target_position);

@@ -1,7 +1,11 @@
-package org.firstinspires.PinkCode.Robot;
+package org.firstinspires.PinkCode.Calculations;
 
 // Abstract Class to Define Preset Values Used Throughout Subsystems
 public abstract class Presets {
+    // Joystick Presets
+    public static final double JOYSTICK_DEFLECTION_LOW = -0.5;
+    public static final double JOYSTICK_DEFLECTION_HIGH = 0.5;
+
     // Collector Presets TODO: Confirm Collector Presets
     public static final double COLLECTOR_COLLECT_POWER = 1; // Power Sent to Motor While Collecting
     public static final double COLLECTOR_EJECT_POWER = -1; // Power Sent to Motor While Ejecting

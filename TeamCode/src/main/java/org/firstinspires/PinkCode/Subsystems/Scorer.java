@@ -1,8 +1,6 @@
 package org.firstinspires.PinkCode.Subsystems;
 
 import org.firstinspires.PinkCode.Robot.Hardware;
-import org.firstinspires.PinkCode.Robot.PD;
-import org.firstinspires.PinkCode.Robot.Presets;
 
 // Abstract Class to Define the Methods of the Extender Subsystem
 public abstract class Scorer {

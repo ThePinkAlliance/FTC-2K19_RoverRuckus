@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.PinkCode.Robot.Hardware;
-import org.firstinspires.PinkCode.Robot.Presets;
+import org.firstinspires.PinkCode.Calculations.Presets;
 import org.firstinspires.PinkCode.Subsystems.Base;
 import org.firstinspires.PinkCode.Subsystems.Collector;
 import org.firstinspires.PinkCode.Subsystems.Extender;
@@ -18,7 +18,6 @@ import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.continuous_sco
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.lower_robot;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.release_hook;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.set;
-import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_left;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_middle;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_right;

@@ -3,8 +3,8 @@ package org.firstinspires.PinkCode.Subsystems;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.PinkCode.Robot.Hardware;
-import org.firstinspires.PinkCode.Robot.PD;
-import org.firstinspires.PinkCode.Robot.Presets;
+import org.firstinspires.PinkCode.Calculations.PD;
+import org.firstinspires.PinkCode.Calculations.Presets;
 
 // Abstract Class to Define the Methods of the Lift Subsystem
 public abstract class Lift {
