@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.PinkCode.Robot.Controls;
 import org.firstinspires.PinkCode.Robot.Hardware;
-import org.firstinspires.PinkCode.Robot.Presets;
+import org.firstinspires.PinkCode.Calculations.Presets;
 import org.firstinspires.PinkCode.Subsystems.Base;
 import org.firstinspires.PinkCode.Subsystems.Collector;
 import org.firstinspires.PinkCode.Subsystems.Extender;
@@ -88,12 +88,12 @@ public class Auto extends OpMode {
         //Set servos to correct position
         robot.collector_rotate.setPosition(Presets.COLLECTOR_STOW_POSITION);
         // Set Auto Program Starting Position
-        if(Controls.base_x) {
+        if (Controls.base_x(false)) {
             // Select Auto Program for Starting on the Side Facing the Depot
             auto_picker = side;
             // Add Telemetry to Tell the Drivers What Starting Position is Selected
             telemetry.addData("Starting Position: ", "Side");
-        } else if(Controls.base_b) {
+        } else if(Controls.base_b(false)) {
             // Select Auto Program for Starting on the Side Facing the Crater
             auto_picker = center;
             // Add Telemetry to Tell the Drivers What Starting Position is Selected
@@ -331,7 +331,7 @@ public class Auto extends OpMode {
                                }
                                else
                                {
-                                   Collector.hold();
+                                   Collector.collect_stop();
                                }
                                 //move collector back, sort, and score
                                while(!flag)

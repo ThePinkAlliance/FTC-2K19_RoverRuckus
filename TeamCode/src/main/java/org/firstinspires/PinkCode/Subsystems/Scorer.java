@@ -10,6 +10,7 @@ public abstract class Scorer {
     public static double score_right_target_position;
     public static double score_left_target_position;
     public static double score_flap_target_position;
+    public static double score_kicker_target_position;
     public static Hardware robot = new Hardware();
 
     // Method for Rotating the Scoring Bucket to a Position
@@ -57,4 +58,15 @@ public abstract class Scorer {
         // Return Value
         return robot.score_flap.getPosition() == score_flap_target_position;
     }
+    //public static boolean score_kicker_rotate_to_position (double position)
+   // {
+        //Define Commands
+        //score_kicker_target_position = position;
+
+        //Set Servo Position
+        //robot.score_kicker.setPosition(score_kicker_target_position);
+
+        //Return Value
+        //return robot.score_kicker.getPosition() == score_kicker_target_position;
+  //  }
 }
