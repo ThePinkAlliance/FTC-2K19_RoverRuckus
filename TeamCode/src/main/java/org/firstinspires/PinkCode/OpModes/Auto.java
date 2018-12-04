@@ -17,6 +17,7 @@ import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.center_stop;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.continuous_score;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.lower_robot;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.release_hook;
+import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.set;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_left;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_middle;
@@ -102,7 +103,7 @@ public class Auto extends OpMode {
                 telemetry.addData("Status: ", "Lowering Robot");
                 telemetry.update();
                 Lift.lift_to_position(Presets.LIFT_RELEASE_POSITION);
-                center_auto = center_stop;
+                center_auto = scan;
                 break;
 
             case scan:
@@ -170,12 +171,14 @@ public class Auto extends OpMode {
                 telemetry.addData("Status", "Scanning for middle");
                 telemetry.update();
                 //Extend to gold cube
-                Extender.extend_to_position(Presets.EXTEND_MID_GOLD_POSITION);
-                //Collect Cube
                 Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
                 Collector.collect();
+                Extender.extend_to_position(Presets.EXTEND_MID_GOLD_POSITION);
+                //Collect Cube
                 if (runtime.seconds() - markedTime > 3) {
                     center_auto = set;
+                    markedTime = runtime.seconds();
+                    break;
                 } else {
                     center_auto = scan_middle;
                 }
@@ -185,8 +188,13 @@ public class Auto extends OpMode {
                 telemetry.addData("Status", "Setting");
                 telemetry.update();
                 Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
-                markedTime = runtime.seconds();
-                center_auto = score_and_set;
+                Collector.eject();
+                center_auto = center_stop;
+                if (runtime.seconds() - markedTime > 3) {
+                    center_auto = center_stop;
+                }else {
+                    center_auto = set;
+                }
                 break;
             case score_and_set:
                 //Scores material from sample and sets all motors to desired location
@@ -202,13 +210,11 @@ public class Auto extends OpMode {
                 while (flag)
                     if (robot.left_extend.getCurrentPosition() >= Presets.LIFT_SCORE_POSITION || robot.right_extend.getCurrentPosition() >= Presets.LIFT_SCORE_POSITION) {
                         Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
+                        //Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_KICK);
                         flag = false;
                     }
-                if (runtime.seconds() - markedTime < 2) {
-
-                }
-                Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
-
+                    //Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
+                    Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
                 center_auto = continuous_score;
                 break;
             //While Loop for continuous scoring
@@ -266,9 +272,11 @@ public class Auto extends OpMode {
                             while (flag)
                                 if (robot.left_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION && robot.right_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION) {
                                     Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
+                                    //Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_KICK);
                                     flag = false;
                                 }
                         }
+                        //Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
                         Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
                     }
                 }

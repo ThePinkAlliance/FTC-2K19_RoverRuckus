@@ -52,18 +52,22 @@ public class Teleop extends Controls {
         Extender.extend_by_command(base_left_trigger(0, 0.5));
 
         // Lift Controls
-        Lift.lift_by_command(tower_right_joystick(-0.5, 0.5));
-        if (tower_back(false)){
+        if (gamepad2.right_stick_y < -.1 || gamepad2.right_stick_y > .1)
+        {
+            Lift.lift_by_command(tower_right_joystick(-0.1, 0.1));
+        } else if (tower_back(false)){
             Lift.robot.right_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             Lift.robot.left_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             Lift.robot.right_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             Lift.robot.left_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        } else if(tower_y(false)){
+        } else if(tower_y(true)){
             Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
+        } else if(tower_a(true)){
+            Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
         } else {
             Lift.lift_hold();
         }
-
+        Lift.lift_by_command(tower_right_joystick(-0.1, 0.1));
         // Scorer Controls
         // y=Mx+b to convert 1 to -1 joy to 0 to 1 servo (y = -0.5X + 0.5)
         Scorer.score_rotate_by_command((-0.5*tower_left_joystick(-0.5, 0.5))+0.5);
@@ -76,12 +80,16 @@ public class Teleop extends Controls {
         //Tower Flap Controls
         if (tower_right_bumper(false)) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
+           // Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_KICK);
+            //TODO MAY BE CAUSING ISSUES
+           // Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
         } else if (tower_left_bumper(false)) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
         } else if (tower_y(false)) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
         } else if (tower_a(false) || tower_b(false)) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
+           //Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
         }
 
         // Add Telemetry to Phone for Debugging and Testing
@@ -103,38 +111,5 @@ public class Teleop extends Controls {
 
     // Code to Run Once When the Driver Hits Stop
     public void stop() {
-        // Clear and Update Telemetry
-        telemetry.clear();
-        telemetry.addData("Subsystem States:", "");
-
-        // Stop Base and Send Error Message if Base Fails to Stop Completely
-        if (!Base.drive_stop()) {
-            telemetry.addData("Base: ","Error - Not Stopped");
-        } else {
-            telemetry.addData("Base: ", "Success - Stopped");
-        }
-
-        // Retract Extender and Send Error Message if Extender Fails to Retract Fully
-        if (!Extender.extend_stop()) {
-            telemetry.addData("Extender: ", "Error - Not Retracted");
-        } else {
-            telemetry.addData("Extender: ", "Success - Retracted");
-        }
-
-        // Lower Lift and Send Error Message if Lift Fails to Lower Fully
-        if (!Lift.lift_stop()) {
-            telemetry.addData("Lift: ", "Error - Not Retracted");
-        } else {
-            telemetry.addData("Lift: ", "Success - Retracted");
-        }
-
-        // Stop Collector and Send Error Message if Collector Fails to Stop Completely
-        if (!Collector.collect_stop()) {
-            telemetry.addData("Collector: ", "Error - Not Stopped");
-        } else {
-            telemetry.addData("Collector: ", "Success - Stopped");
-        }
-
-        telemetry.update();
     }
 }

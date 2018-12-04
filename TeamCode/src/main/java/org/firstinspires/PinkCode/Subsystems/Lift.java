@@ -27,7 +27,7 @@ public abstract class Lift {
 //            lift_command = Range.clip(command,((Presets.LIFT_MIN_POSITION-lift_hold_position)*0.002), 0);
 //        }
 
-        lift_command = Range.clip(command, -1, 0.6);
+        lift_command = Range.clip(command, -1, 1);
         // Set Motor Power
         robot.right_lift.setPower(lift_command);
         robot.left_lift.setPower(lift_command);
