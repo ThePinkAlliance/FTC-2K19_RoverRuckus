@@ -1,10 +1,9 @@
 package org.firstinspires.PinkCode.Subsystems;
 
-import org.firstinspires.PinkCode.Robot.Controls;
 import org.firstinspires.PinkCode.Robot.Hardware;
 
 // Abstract Class to Define the Methods of the Base Subsystem
-public abstract class Base extends Controls {
+public abstract class Base {
     // Define Class Members
     public static double left_wheel_command;
     public static double right_wheel_command;

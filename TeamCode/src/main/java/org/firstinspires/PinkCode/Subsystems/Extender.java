@@ -1,8 +1,8 @@
 package org.firstinspires.PinkCode.Subsystems;
 
 import org.firstinspires.PinkCode.Robot.Hardware;
-import org.firstinspires.PinkCode.Calculations.PD;
-import org.firstinspires.PinkCode.Calculations.Presets;
+import org.firstinspires.PinkCode.Robot.PD;
+import org.firstinspires.PinkCode.Robot.Presets;
 import com.qualcomm.robotcore.util.Range;
 
 // Abstract Class to Define the Methods of the Extender Subsystem
