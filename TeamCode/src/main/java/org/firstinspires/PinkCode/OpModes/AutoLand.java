@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.PinkCode.Robot.Hardware;
-import org.firstinspires.PinkCode.Calculations.Presets;
+import org.firstinspires.PinkCode.Robot.Presets;
 import org.firstinspires.PinkCode.Subsystems.Base;
 import org.firstinspires.PinkCode.Subsystems.Extender;
 import org.firstinspires.PinkCode.Subsystems.Lift;

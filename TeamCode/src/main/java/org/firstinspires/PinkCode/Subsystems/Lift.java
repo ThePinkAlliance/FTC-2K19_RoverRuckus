@@ -56,7 +56,6 @@ public abstract class Lift {
         previous_lift_position = lift_hold_position;
         lift_command = PD.get_lift_command(lift_error, lift_speed);
 
-        lift_command =  Range.clip(lift_command, -1.0, 0.5);
         // Set Motor Power
         robot.right_lift.setPower(lift_command);
         robot.left_lift.setPower(lift_command);
@@ -68,10 +67,7 @@ public abstract class Lift {
     // Method for Holding the Lift in Place
     public static boolean lift_hold () {
         // Define Commands
-        lift_error = lift_hold_position - robot.right_lift.getCurrentPosition();
-        lift_speed = robot.right_lift.getCurrentPosition() - previous_lift_position;
-        previous_lift_position = robot.right_lift.getCurrentPosition();
-        lift_command = PD.get_lift_command(lift_error, lift_speed);
+        lift_command = 0;
 
         // Set Motor Command
         robot.right_lift.setPower(lift_command);

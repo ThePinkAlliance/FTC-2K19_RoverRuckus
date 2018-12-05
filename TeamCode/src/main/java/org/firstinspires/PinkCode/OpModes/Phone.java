@@ -1,11 +1,11 @@
-package org.firstinspires.PinkCode.Subsystems;
+package org.firstinspires.PinkCode.OpModes;
 
 import android.graphics.Bitmap;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.PinkCode.robotcontroller.internal.CameraOp;
 
-
-public abstract class Phone extends CameraOp {
+@TeleOp(name = "Phone", group = "Testing")
+public class Phone extends CameraOp {
 
     int ds2 = 2;  // additional downsampling of the image
     private int looped = 0;

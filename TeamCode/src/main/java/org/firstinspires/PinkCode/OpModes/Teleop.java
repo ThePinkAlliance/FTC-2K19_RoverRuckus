@@ -1,25 +1,24 @@
 package org.firstinspires.PinkCode.OpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.PinkCode.Calculations.Average;
-import org.firstinspires.PinkCode.Calculations.Presets;
-import org.firstinspires.PinkCode.Robot.Controls;
+import org.firstinspires.PinkCode.Robot.Presets;
 import org.firstinspires.PinkCode.Subsystems.Base;
 import org.firstinspires.PinkCode.Subsystems.Collector;
 import org.firstinspires.PinkCode.Subsystems.Extender;
 import org.firstinspires.PinkCode.Subsystems.Lift;
 import org.firstinspires.PinkCode.Subsystems.Scorer;
+import org.firstinspires.PinkCode.Subsystems.Subsystem;
 
 // Class for Player-Controlled Period of the Game Which Binds Controls to Subsystems
 @TeleOp(name = "Teleop", group = "Teleop")
-public class Teleop extends Controls {
+public class Teleop extends OpMode {
     // Code to Run Once When the Driver Hits Init
     public void init() {
         // Initialization of Each Subsystem's Hardware Map
-        Base.robot.init(hardwareMap);
-        Collector.robot.init(hardwareMap);
+        Subsystem.robot.init(hardwareMap);
         Extender.robot.init(hardwareMap);
         Lift.robot.init(hardwareMap);
         Scorer.robot.init(hardwareMap);
@@ -28,88 +27,95 @@ public class Teleop extends Controls {
     // Code to Run Constantly While the Program is Running
     public void loop() {
         // Drive Train Control
-        Base.drive_by_command(base_right_joystick(-0.5, 0.5), base_left_joystick(-0.5, 0.5));
+        Base.drive_by_command(-gamepad1.right_stick_y, -gamepad1.left_stick_y);
 
         // Collector Controls
-        if (base_y(false)) {
+        if (gamepad1.y) {
             Collector.collect();
-        } else if (base_b(false)) {
+        } else if (gamepad1.b) {
             Collector.eject();
-        } else if (base_right_bumper(false)) {
+        } else if (gamepad1.right_bumper) {
             Collector.collect();
             Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
-        } else if (base_left_bumper(false)) {
+        } else if (gamepad1.left_bumper) {
             Collector.eject();
             Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
-        } else if (tower_b(false)) {
+        } else if (gamepad2.b) {
             Collector.collect_stop();
             Collector.rotate_to_position(Presets.COLLECTOR_SORT_POSITION);
         } else {
             Collector.collect_stop();
         }
         // Extender Controls
-        Extender.extend_by_command(base_right_trigger(0, 0.5));
-        Extender.extend_by_command(base_left_trigger(0, 0.5));
+        Extender.extend_by_command(gamepad1.right_trigger);
+        Extender.extend_by_command(-gamepad1.left_trigger);
 
         // Lift Controls
-        if (gamepad2.right_stick_y < -.1 || gamepad2.right_stick_y > .1)
-        {
-            Lift.lift_by_command(tower_right_joystick(-0.1, 0.1));
-        } else if (tower_back(false)){
+        if (gamepad2.right_stick_y < -.1 || gamepad2.right_stick_y > .1) {
+            Lift.lift_by_command(-gamepad2.right_stick_y);
+        } else if (gamepad2.back){
             Lift.robot.right_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             Lift.robot.left_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             Lift.robot.right_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             Lift.robot.left_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        } else if(tower_y(true)){
+        } else if(gamepad2.y){
             Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
-        } else if(tower_a(true)){
+        } else if(gamepad2.a){
             Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
         } else {
-            Lift.lift_hold();
+            Lift.lift_stop();
         }
-        Lift.lift_by_command(tower_right_joystick(-0.1, 0.1));
+
         // Scorer Controls
         // y=Mx+b to convert 1 to -1 joy to 0 to 1 servo (y = -0.5X + 0.5)
-        Scorer.score_rotate_by_command((-0.5*tower_left_joystick(-0.5, 0.5))+0.5);
-        if (tower_dpad_right(false) || tower_y(false)) {
+        if (gamepad2.left_stick_y > 0.1 || gamepad2.left_stick_y < -0.1) {
+            Scorer.score_rotate_by_command(-gamepad2.left_stick_y);
+        } else if (gamepad2.dpad_right || gamepad2.y) {
             Scorer.score_rotate_to_position(Presets.SCORER_SCORE);
-        } else if (tower_dpad_left(false) || tower_a(false)) {
+        } else if (gamepad2.dpad_left || gamepad2.a) {
             Scorer.score_rotate_to_position(Presets.SCORER_COLLECT);
+        } else {
+            Scorer.score_rotate_by_command(0);
         }
 
         //Tower Flap Controls
-        if (tower_right_bumper(false)) {
+        if (gamepad2.right_bumper) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
            // Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_KICK);
             //TODO MAY BE CAUSING ISSUES
            // Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
-        } else if (tower_left_bumper(false)) {
+        } else if (gamepad2.left_bumper) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
-        } else if (tower_y(false)) {
+        } else if (gamepad2.y) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
-        } else if (tower_a(false) || tower_b(false)) {
+        } else if (gamepad2.a || gamepad2.b) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
            //Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
         }
 
+        // Set Motor Powers and Servos to Their Commands
+        Subsystem.set_motor_powers();
+        Subsystem.set_servo_positions();
+
         // Add Telemetry to Phone for Debugging and Testing
         telemetry.addData("Powers: ","");
-        telemetry.addData("Base Right Power: ", Base.robot.right_drive.getPower());
-        telemetry.addData("Base Left Power: ", Base.robot.left_drive.getPower());
-        telemetry.addData("Collector Power: ", Collector.robot.collect.getPower());
-        telemetry.addData("Extender Arm Power: ", Average.two_values(Extender.robot.right_extend.getPower(), Extender.robot.left_extend.getPower()));
-        telemetry.addData("Lift Power: ", Average.two_values(Lift.robot.right_lift.getPower(), Lift.robot.left_lift.getPower()));
-        telemetry.addData("Scorer Rotate Power: ", Average.two_values(Scorer.robot.score_right_rotate.getPower(), Scorer.robot.score_left_rotate.getPower()));
+        telemetry.addData("Base Right Power: ", Subsystem.robot.right_drive.getPower());
+        telemetry.addData("Base Left Power: ", Subsystem.robot.left_drive.getPower());
+        telemetry.addData("Collector Power: ", Subsystem.robot.collect.getPower());
+        telemetry.addData("Lift Power: ", Subsystem.robot.right_lift.getPower());
+        telemetry.addData("Tower Right Rotate: ", Scorer.robot.score_right_rotate.getPower());
+        telemetry.addData("Tower Left Rotate: ", Scorer.robot.score_left_rotate.getPower());
         telemetry.addData("Positions: ","");
-        telemetry.addData("Base Right Position: ", Base.robot.right_drive.getCurrentPosition());
-        telemetry.addData("Base Left Position: ", Base.robot.left_drive.getCurrentPosition());
-        telemetry.addData("Collector Rotate Target Position: ", Collector.robot.collector_rotate.getPosition());
-        telemetry.addData("Extender Arm Position: ", Average.two_values(Extender.robot.right_lift.getCurrentPosition(), Extender.robot.left_extend.getCurrentPosition()));
-        telemetry.addData("Lift Position: ", Average.two_values(Lift.robot.right_lift.getCurrentPosition(), Lift.robot.left_lift.getCurrentPosition()));
+        telemetry.addData("Base Right Position: ", Subsystem.robot.right_drive.getCurrentPosition());
+        telemetry.addData("Base Left Position: ", Subsystem.robot.left_drive.getCurrentPosition());
+        telemetry.addData("Lift Position: ", Lift.robot.right_lift.getCurrentPosition());
+        telemetry.addData("Collector Rotate Target Position: ", Subsystem.robot.collector_rotate.getPosition());
+        telemetry.addData("Flap Target Position: ", Scorer.robot.score_flap.getPosition());
         telemetry.update();
     }
 
     // Code to Run Once When the Driver Hits Stop
     public void stop() {
+        Base.drive_stop();
     }
 }

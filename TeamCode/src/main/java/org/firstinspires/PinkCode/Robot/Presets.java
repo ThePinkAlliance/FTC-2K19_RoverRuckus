@@ -31,13 +31,13 @@ public abstract class Presets {
     public static final double LIFT_POSITION_THRESHOLD = 0; // Success Threshold for Lift PD
     public static final double LIFT_MIN_POWER = -1; // Most Power Sent While Lowering Lift
     public static final double LIFT_MAX_POWER = 1; // Most Power Sent While Raising Lift
-    public static final double LIFT_SCORE_POSITION = 1450; // Raised Position for Scoring in Lander
+    public static final double LIFT_SCORE_POSITION = 4400; // Raised Position for Scoring in Lander
     public static final double LIFT_SORT_POSITION = 0; // Lowered Position for Collection from Sort
     public static final double LIFT_RELEASE_BREAK = -.25;
-    public static final double LIFT_RELEASE_POSITION = 1450;
-    public static final double LIFT_TRAVEL_POSITION = 500;
+    public static final double LIFT_RELEASE_POSITION = 4400;
+    public static final double LIFT_TRAVEL_POSITION = 2000;
     public static final double LIFT_MIN_POSITION = 0; // Min position allowed for the lift
-    public static final double LIFT_MAX_POSITION = 1450; // Max position allowed for the lift
+    public static final double LIFT_MAX_POSITION = 4500; // Max position allowed for the lift
 
     // Scorer Presets TODO: Confirm Scorer Presets
     public static final double SCORER_COLLECT = 0;
