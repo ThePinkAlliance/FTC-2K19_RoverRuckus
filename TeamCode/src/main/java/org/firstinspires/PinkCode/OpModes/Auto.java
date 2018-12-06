@@ -11,6 +11,7 @@ import org.firstinspires.PinkCode.Subsystems.Collector;
 import org.firstinspires.PinkCode.Subsystems.Extender;
 import org.firstinspires.PinkCode.Subsystems.Lift;
 import org.firstinspires.PinkCode.Subsystems.Scorer;
+import org.firstinspires.PinkCode.OpModes.Phone;
 
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.center_initialize;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.center_stop;
@@ -25,7 +26,7 @@ import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.sample;
 
 // Class for the Autonomous Period of the Game Calling Methods from Subsystems in Sequence
 @Autonomous(name="Auto", group="Autonomous")
-public class Auto extends OpMode {
+public class Auto extends OpMode{
     // Set Up Center Auto Case Statement
     public center_auto center_auto;
     public enum center_auto {
@@ -80,6 +81,7 @@ public class Auto extends OpMode {
                 //Scans area for gold cube
                 telemetry.addData("Status", "Scanning for Cube");
                 telemetry.update();
+
                 //TODO: Scan for Gold Cube
                 center_auto = release_hook;
                 markedTime = runtime.seconds();

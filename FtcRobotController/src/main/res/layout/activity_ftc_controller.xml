@@ -193,6 +193,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           android:layout_height="800dp"
           android:layout_gravity="left"
           android:layout_marginTop="0sp"
+          android:layout_marginLeft = "210sp"
           android:background="#000000" />
 
 
@@ -216,11 +217,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <View
           android:layout_width="4dp"
           android:layout_height="800dp"
-          android:layout_gravity=""
+          android:layout_gravity="left"
           android:layout_margin="0sp"
-          android:paddingLeft= "200dp"
           android:background="#000000" />
 
+
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:orientation="vertical">
+
+      <View
+          android:layout_width="4dp"
+          android:layout_height="800dp"
+          android:layout_gravity="left"
+          android:layout_marginTop="0sp"
+          android:layout_marginLeft = "100sp"
+          android:background="#000000" />
     </FrameLayout>
 
   </RelativeLayout>

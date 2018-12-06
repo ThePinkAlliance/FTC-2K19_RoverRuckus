@@ -7,10 +7,10 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import java.io.ByteArrayOutputStream;
+import java.security.Policy;
 
 /**
  * TeleOp Mode
@@ -57,6 +57,7 @@ public class CameraOp extends OpMode {
     public Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
         public void onPreviewFrame(byte[] data, Camera camera) {
             try {
+
                 Camera.Parameters parameters = camera.getParameters();
                 width = parameters.getPreviewSize().width;
                 height = parameters.getPreviewSize().height;
@@ -123,6 +124,8 @@ public class CameraOp extends OpMode {
     }
 
     public void startCamera() {
+
+
         camera = openCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
 
         camera.setPreviewCallback(previewCallback);
@@ -157,10 +160,10 @@ public class CameraOp extends OpMode {
         }
     }
 
+
     static public int red(int pixel) {
         return (pixel >> 16) & 0xff;
     }
-
     static public int green(int pixel) {
         return (pixel >> 8) & 0xff;
     }
@@ -173,17 +176,26 @@ public class CameraOp extends OpMode {
         return (red(pixel) + green(pixel) + blue(pixel));
     }
 
-    static public int highestColor(int red, int green, int blue) {
-        int[] color = {red, green, blue};
+    static public int white(int pixel)
+    {
+        return (red(pixel) + green(pixel) + blue(pixel)) - (red(pixel) + green(pixel) + blue(pixel));
+    }
+
+    static public int gold(int pixel)
+    {
+        return (red(pixel) + green(pixel));
+    }
+
+    static public int highestColor(int white, int gold) {
+        int[] color = {white, gold};
         int value = 0;
-        for (int i = 1; i < 3; i++) {
+        for (int i = 1; i < 2; i++) {
             if (color[value] < color[i]) {
                 value = i;
             }
         }
         return value;
     }
-
     // returns ROTATED image, to match preview window
     static public Bitmap convertYuvImageToRgb(YuvImage yuvImage, int width, int height, int downSample) {
         Bitmap rgbImage;
