@@ -1,121 +1,141 @@
 package org.firstinspires.PinkCode.OpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.PinkCode.Robot.Presets;
-import org.firstinspires.PinkCode.Subsystems.Base;
+import org.firstinspires.PinkCode.Calculations.Presets;
 import org.firstinspires.PinkCode.Subsystems.Collector;
-import org.firstinspires.PinkCode.Subsystems.Extender;
-import org.firstinspires.PinkCode.Subsystems.Lift;
-import org.firstinspires.PinkCode.Subsystems.Scorer;
 import org.firstinspires.PinkCode.Subsystems.Subsystem;
+import org.firstinspires.PinkCode.Subsystems.Extender;
+import org.firstinspires.PinkCode.Subsystems.Scorer;
+import org.firstinspires.PinkCode.Subsystems.Base;
+import org.firstinspires.PinkCode.Subsystems.Lift;
+import org.firstinspires.PinkCode.Robot.Controls;
 
 // Class for Player-Controlled Period of the Game Which Binds Controls to Subsystems
 @TeleOp(name = "Teleop", group = "Teleop")
-public class Teleop extends OpMode {
-    // Code to Run Once When the Driver Hits Init
+public class Teleop extends Controls {
+    // Code to Run Once When the Drivers Press Init
     public void init() {
         // Initialization of Each Subsystem's Hardware Map
         Subsystem.robot.init(hardwareMap);
-        Extender.robot.init(hardwareMap);
-        Lift.robot.init(hardwareMap);
-        Scorer.robot.init(hardwareMap);
+
+        // Telemetry Update to Inform Drivers That the Program is Initialized
+        telemetry.addData("Status: ", "Waiting for Driver to Press Play");
+        telemetry.update();
     }
 
-    // Code to Run Constantly While the Program is Running
+    // Code to Run Constantly After the Drivers Press Play and Before They Press Stop
     public void loop() {
-        // Drive Train Control
+        // Drive Train Control TODO Controls for Joysticks
         Base.drive_by_command(-gamepad1.right_stick_y, -gamepad1.left_stick_y);
 
         // Collector Controls
-        if (gamepad1.y) {
+        if (base_y(false)) {
             Collector.collect();
-        } else if (gamepad1.b) {
+        } else if (base_b(false)) {
             Collector.eject();
-        } else if (gamepad1.right_bumper) {
+        } else if (base_right_bumper(false)) {
             Collector.collect();
             Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
-        } else if (gamepad1.left_bumper) {
+        } else if (base_left_bumper(false)) {
             Collector.eject();
             Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
-        } else if (gamepad2.b) {
+        } else if (tower_b(false)) {
             Collector.collect_stop();
             Collector.rotate_to_position(Presets.COLLECTOR_SORT_POSITION);
         } else {
             Collector.collect_stop();
         }
-        // Extender Controls
+
+        // Extender Controls TODO: Controls for Triggers
         Extender.extend_by_command(gamepad1.right_trigger);
         Extender.extend_by_command(-gamepad1.left_trigger);
 
-        // Lift Controls
+        // Lift Controls TODO: Controls for Joysticks
         if (gamepad2.right_stick_y < -.1 || gamepad2.right_stick_y > .1) {
             Lift.lift_by_command(-gamepad2.right_stick_y);
-        } else if (gamepad2.back){
+        } else if (tower_back(false)) {
             Lift.robot.right_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             Lift.robot.left_lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             Lift.robot.right_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             Lift.robot.left_lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        } else if(gamepad2.y){
+        } else if(tower_y(false)) {
             Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
-        } else if(gamepad2.a){
+        } else if(tower_a(false)) {
             Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
         } else {
             Lift.lift_stop();
         }
 
-        // Scorer Controls
-        // y=Mx+b to convert 1 to -1 joy to 0 to 1 servo (y = -0.5X + 0.5)
+        // Scorer Controls TODO: Controls for Joysticks
         if (gamepad2.left_stick_y > 0.1 || gamepad2.left_stick_y < -0.1) {
             Scorer.score_rotate_by_command(-gamepad2.left_stick_y);
-        } else if (gamepad2.dpad_right || gamepad2.y) {
+        } else if (tower_dpad_right(false) || tower_y(false)) {
             Scorer.score_rotate_to_position(Presets.SCORER_SCORE);
-        } else if (gamepad2.dpad_left || gamepad2.a) {
+        } else if (tower_dpad_left(false) || tower_a(false)) {
             Scorer.score_rotate_to_position(Presets.SCORER_COLLECT);
         } else {
             Scorer.score_rotate_by_command(0);
         }
 
         //Tower Flap Controls
-        if (gamepad2.right_bumper) {
+        if (tower_right_bumper(false)) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
-           // Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_KICK);
-            //TODO MAY BE CAUSING ISSUES
-           // Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
-        } else if (gamepad2.left_bumper) {
+            Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_KICK);
+            Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
+        } else if (tower_left_bumper(false)) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
-        } else if (gamepad2.y) {
+        } else if (tower_y(false)) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
-        } else if (gamepad2.a || gamepad2.b) {
+        } else if (tower_a(false) || tower_b(false)) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
-           //Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
+            Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
         }
 
         // Set Motor Powers and Servos to Their Commands
         Subsystem.set_motor_powers();
         Subsystem.set_servo_positions();
 
-        // Add Telemetry to Phone for Debugging and Testing
-        telemetry.addData("Powers: ","");
-        telemetry.addData("Base Right Power: ", Subsystem.robot.right_drive.getPower());
-        telemetry.addData("Base Left Power: ", Subsystem.robot.left_drive.getPower());
-        telemetry.addData("Collector Power: ", Subsystem.robot.collect.getPower());
-        telemetry.addData("Lift Power: ", Subsystem.robot.right_lift.getPower());
-        telemetry.addData("Tower Right Rotate: ", Scorer.robot.score_right_rotate.getPower());
-        telemetry.addData("Tower Left Rotate: ", Scorer.robot.score_left_rotate.getPower());
-        telemetry.addData("Positions: ","");
-        telemetry.addData("Base Right Position: ", Subsystem.robot.right_drive.getCurrentPosition());
-        telemetry.addData("Base Left Position: ", Subsystem.robot.left_drive.getCurrentPosition());
-        telemetry.addData("Lift Position: ", Lift.robot.right_lift.getCurrentPosition());
-        telemetry.addData("Collector Rotate Target Position: ", Subsystem.robot.collector_rotate.getPosition());
-        telemetry.addData("Flap Target Position: ", Scorer.robot.score_flap.getPosition());
-        telemetry.update();
+        // Add Telemetry to Phone for Debugging and Testing if it is Activated
+        if (tower_start(false)) {
+            telemetry.addData("Status: ", "Running Teleop");
+            telemetry.addData("Powers: ", "");
+            telemetry.addData("Base Right Power: ", Subsystem.robot.right_drive.getPower());
+            telemetry.addData("Base Left Power: ", Subsystem.robot.left_drive.getPower());
+            telemetry.addData("Collector Power: ", Subsystem.robot.collect.getPower());
+            telemetry.addData("Lift Power: ", Subsystem.robot.right_lift.getPower());
+            telemetry.addData("Tower Right Rotate: ", Subsystem.robot.score_right_rotate.getPower());
+            telemetry.addData("Tower Left Rotate: ", Scorer.robot.score_left_rotate.getPower());
+            telemetry.addData("Positions: ", "");
+            telemetry.addData("Base Right Position: ", Subsystem.robot.right_drive.getCurrentPosition());
+            telemetry.addData("Base Left Position: ", Subsystem.robot.left_drive.getCurrentPosition());
+            telemetry.addData("Lift Position: ", Subsystem.robot.right_lift.getCurrentPosition());
+            telemetry.addData("Collector Rotate Target Position: ", Subsystem.robot.collector_rotate.getPosition());
+            telemetry.addData("Flap Target Position: ", Subsystem.robot.score_flap.getPosition());
+            telemetry.update();
+        } else {
+            // Telemetry Update to Inform Drivers That the Program is Running and how to Access Telemetry
+            telemetry.addData("Status: ", "Running Teleop");
+            telemetry.addData("Press Start on the Tower Gamepad for Telemetry", "");
+            telemetry.update();
+        }
     }
 
-    // Code to Run Once When the Driver Hits Stop
+    // Code to Run Once When the Drivers Press Stop
     public void stop() {
+        // Stop Sending Commands to Each Subsystem
         Base.drive_stop();
+        Collector.collect_stop();
+        Extender.extend_stop();
+        Lift.lift_stop();
+
+        // Set Motor Powers and Servos to Their Commands
+        Subsystem.set_motor_powers();
+        Subsystem.set_servo_positions();
+
+        // Telemetry Update to Inform Drivers That the Program is Stopped
+        telemetry.addData("Status: ", "Stopped");
+        telemetry.update();
     }
 }

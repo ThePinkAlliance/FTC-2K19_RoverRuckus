@@ -3,7 +3,22 @@ package org.firstinspires.PinkCode.Robot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 // Abstract Class to Define the Controls of the Gamepads
-public abstract class Controls extends OpMode{
+public abstract class Controls extends OpMode {
+    // Define Variables
+    private static boolean base_right_bumper_pressed = false;
+    private static boolean base_left_bumper_pressed = false;
+    private static boolean base_b_pressed = false;
+    private static boolean base_y_pressed = false;
+    private static boolean tower_right_bumper_pressed = false;
+    private static boolean tower_left_bumper_pressed = false;
+    private static boolean tower_dpad_right_pressed = false;
+    private static boolean tower_dpad_left_pressed = false;
+    private static boolean tower_start_pressed = false;
+    private static boolean tower_back_pressed = false;
+    private static boolean tower_a_pressed = false;
+    private static boolean tower_b_pressed = false;
+    private static boolean tower_y_pressed = false;
+
     // Base Gamepad
     public static boolean base_right_joystick_button;
     public static boolean base_left_joystick_button;
@@ -11,8 +26,32 @@ public abstract class Controls extends OpMode{
     public static float base_left_joystick;
     public static float base_right_trigger;
     public static float base_left_trigger;
-    public static boolean base_right_bumper;
-    public static boolean base_left_bumper;
+    protected boolean base_right_bumper(boolean toggle) {
+        if (toggle) {
+            if (!base_right_bumper_pressed && gamepad1.b) {
+                base_right_bumper_pressed = true;
+                return true;
+            } else {
+                base_right_bumper_pressed = false;
+                return false;
+            }
+        } else {
+            return gamepad1.b;
+        }
+    }
+    public boolean base_left_bumper(boolean toggle) {
+        if (toggle) {
+            if (!base_left_bumper_pressed && gamepad1.left_bumper) {
+                base_left_bumper_pressed = true;
+                return true;
+            } else {
+                base_left_bumper_pressed = false;
+                return false;
+            }
+        } else {
+            return gamepad1.left_bumper;
+        }
+    }
     public static boolean base_dpad_right;
     public static boolean base_dpad_left;
     public static boolean base_dpad_down;
@@ -20,9 +59,33 @@ public abstract class Controls extends OpMode{
     public static boolean base_start;
     public static boolean base_back;
     public static boolean base_a;
-    public static boolean base_b;
+    protected boolean base_b(boolean toggle) {
+        if (toggle) {
+            if (!base_b_pressed && gamepad1.b) {
+                base_b_pressed = true;
+                return true;
+            } else {
+                base_b_pressed = false;
+                return false;
+            }
+        } else {
+            return gamepad1.b;
+        }
+    }
     public static boolean base_x;
-    public static boolean base_y;
+    protected boolean base_y(boolean toggle) {
+        if (toggle) {
+            if (!base_y_pressed && gamepad1.y) {
+                base_y_pressed = true;
+                return true;
+            } else {
+                base_y_pressed = false;
+                return false;
+            }
+        } else {
+            return gamepad1.y;
+        }
+    }
 
     // Tower Gamepad
     public static boolean tower_right_joystick_button;
@@ -31,63 +94,124 @@ public abstract class Controls extends OpMode{
     public static float tower_left_joystick;
     public static float tower_right_trigger;
     public static float tower_left_trigger;
-    public static boolean tower_right_bumper;
-    public static boolean tower_left_bumper;
-    public static boolean tower_dpad_right;
-    public static boolean tower_dpad_left;
-    public static boolean tower_dpad_down;
-    public static boolean tower_dpad_up;
-    public static boolean tower_start;
-    public static boolean tower_back;
-    public static boolean tower_a;
-    public static boolean tower_b;
-    public static boolean tower_x;
-    public static boolean tower_y;
-
-    @Override
-    public void loop() {
-        // Base Joystick Definitions
-        base_right_joystick = -gamepad1.right_stick_y;
-        base_left_joystick = -gamepad1.left_stick_y;
-
-        // Tower Joystick Definitions
-        tower_right_joystick = -gamepad2.right_stick_y;
-        tower_left_joystick = -gamepad2.left_stick_y;
-
-        // Base Button Definitions
-        base_right_joystick_button = gamepad1.right_stick_button;
-        base_left_joystick_button = gamepad1.left_stick_button;
-        base_right_trigger = gamepad1.right_trigger;
-        base_right_bumper = gamepad1.right_bumper;
-        base_left_trigger = gamepad1.left_trigger;
-        base_left_bumper = gamepad1.left_bumper;
-        base_dpad_right = gamepad1.dpad_right;
-        base_dpad_left = gamepad1.dpad_left;
-        base_dpad_down = gamepad1.dpad_down;
-        base_dpad_up = gamepad1.dpad_up;
-        base_start = gamepad1.start;
-        base_back = gamepad1.back;
-        base_a = gamepad1.a;
-        base_b = gamepad1.b;
-        base_x = gamepad1.x;
-        base_y = gamepad1.y;
-
-        // Tower Button Definitions
-        tower_right_joystick_button = gamepad2.right_stick_button;
-        tower_left_joystick_button = gamepad2.left_stick_button;
-        tower_right_trigger = gamepad2.right_trigger;
-        tower_left_trigger = gamepad2.left_trigger;
-        tower_right_bumper = gamepad2.right_bumper;
-        tower_left_bumper = gamepad2.left_bumper;
-        tower_dpad_right = gamepad2.dpad_right;
-        tower_dpad_left = gamepad2.dpad_left;
-        tower_dpad_down = gamepad2.dpad_down;
-        tower_dpad_up = gamepad2.dpad_up;
-        tower_start = gamepad2.start;
-        tower_back = gamepad2.back;
-        tower_a = gamepad2.a;
-        tower_b = gamepad2.b;
-        tower_x = gamepad2.x;
-        tower_y = gamepad2.y;
+    public boolean tower_right_bumper(boolean toggle) {
+        if (toggle) {
+            if (!tower_right_bumper_pressed && gamepad2.right_bumper) {
+                tower_right_bumper_pressed = true;
+                return true;
+            } else {
+                tower_right_bumper_pressed = false;
+                return false;
+            }
+        } else {
+            return gamepad2.right_bumper;
+        }
+    }
+    public boolean tower_left_bumper(boolean toggle) {
+        if (toggle) {
+            if (!tower_left_bumper_pressed && gamepad2.left_bumper) {
+                tower_left_bumper_pressed = true;
+                return true;
+            } else {
+                tower_left_bumper_pressed = false;
+                return false;
+            }
+        } else {
+            return gamepad2.left_bumper;
+        }
+    }
+    public boolean tower_dpad_right(boolean toggle) {
+        if (toggle) {
+            if (!tower_dpad_right_pressed && gamepad2.dpad_right) {
+                tower_dpad_right_pressed = true;
+                return true;
+            } else {
+                tower_dpad_right_pressed = false;
+                return false;
+            }
+        } else {
+            return gamepad2.dpad_right;
+        }
+    }
+    public boolean tower_dpad_left(boolean toggle) {
+        if (toggle) {
+            if (!tower_dpad_left_pressed && gamepad2.dpad_left) {
+                tower_dpad_left_pressed = true;
+                return true;
+            } else {
+                tower_dpad_left_pressed = false;
+                return false;
+            }
+        } else {
+            return gamepad2.dpad_left;
+        }
+    }
+    public boolean tower_dpad_down;
+    public boolean tower_dpad_up;
+    public boolean tower_start(boolean toggle) {
+        if (toggle) {
+            if (!tower_start_pressed && gamepad2.start) {
+                tower_start_pressed = true;
+                return true;
+            } else {
+                tower_start_pressed = false;
+                return false;
+            }
+        } else {
+            return gamepad2.start;
+        }
+    }
+    public boolean tower_back(boolean toggle) {
+        if (toggle) {
+            if (!tower_back_pressed && gamepad2.back) {
+                tower_back_pressed = true;
+                return true;
+            } else {
+                tower_back_pressed = false;
+                return false;
+            }
+        } else {
+            return gamepad2.back;
+        }
+    }
+    public boolean tower_a(boolean toggle) {
+        if (toggle) {
+            if (!tower_a_pressed && gamepad2.a) {
+                tower_a_pressed = true;
+                return true;
+            } else {
+                tower_a_pressed = false;
+                return false;
+            }
+        } else {
+            return gamepad2.a;
+        }
+    }
+    public boolean tower_b(boolean toggle) {
+        if (toggle) {
+            if (!tower_b_pressed && gamepad2.b) {
+                tower_b_pressed = true;
+                return true;
+            } else {
+                tower_b_pressed = false;
+                return false;
+            }
+        } else {
+            return gamepad2.b;
+        }
+    }
+    public boolean tower_x;
+    public boolean tower_y(boolean toggle) {
+        if (toggle) {
+            if (!tower_y_pressed && gamepad2.y) {
+                tower_y_pressed = true;
+                return true;
+            } else {
+                tower_y_pressed = false;
+                return false;
+            }
+        } else {
+            return gamepad2.y;
+        }
     }
 }

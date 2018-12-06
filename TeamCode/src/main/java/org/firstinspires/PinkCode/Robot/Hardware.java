@@ -2,10 +2,8 @@ package org.firstinspires.PinkCode.Robot;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.CRServo;
 
 // Class to Define the Hardware of the Robot
 public class Hardware {
@@ -22,11 +20,11 @@ public class Hardware {
     public CRServo score_right_rotate;
     public Servo score_flap;
     public Servo collector_rotate;
-    //public Servo score_kicker;
+    public Servo score_kicker;
     public Servo hook;
 
     // Local OpMode Members
-    HardwareMap hwMap = null;
+    private HardwareMap hwMap = null;
 
     // Method Called When Referencing Robot Hardware in Subsystems
     public void init (HardwareMap ahwMap) {
@@ -90,6 +88,6 @@ public class Hardware {
         score_flap = hwMap.get(Servo.class, "score_flap");
         collector_rotate = hwMap.get(Servo.class, "collector_rotate");
         hook = hwMap.get(Servo.class, "hook");
-        //score_kicker = hwMap.get(Servo.class, "score_kicker");
+        score_kicker = hwMap.get(Servo.class, "score_kicker");
     }
 }
