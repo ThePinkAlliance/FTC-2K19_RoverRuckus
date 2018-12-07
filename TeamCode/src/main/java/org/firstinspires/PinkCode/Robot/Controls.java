@@ -36,7 +36,7 @@ public abstract class Controls extends OpMode {
                 return false;
             }
         } else {
-            return gamepad1.b;
+            return gamepad1.right_bumper;
         }
     }
     public boolean base_left_bumper(boolean toggle) {

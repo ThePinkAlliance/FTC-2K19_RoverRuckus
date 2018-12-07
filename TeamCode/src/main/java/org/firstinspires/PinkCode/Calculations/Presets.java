@@ -39,5 +39,5 @@ public abstract class Presets {
     public static final double SCORER_FLAP_OPEN = 0.5;
     public static final double SCORER_FLAP_CLOSED = 1;
     public static final double SCORER_KICKER_STOW = 0;
-    public static final double SCORER_KICKER_KICK = 1;
+    public static final double SCORER_KICKER_KICK = 0.5;
 }

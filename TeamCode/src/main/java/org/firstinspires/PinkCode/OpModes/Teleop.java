@@ -49,8 +49,13 @@ public class Teleop extends Controls {
         }
 
         // Extender Controls TODO: Controls for Triggers
-        Extender.extend_by_command(gamepad1.right_trigger);
-        Extender.extend_by_command(-gamepad1.left_trigger);
+        if (gamepad1.right_trigger > 0.1) {
+            Extender.extend_by_command(gamepad1.right_trigger);
+        } else if (gamepad1.left_trigger > 0.1) {
+            Extender.extend_by_command(-gamepad1.left_trigger);
+        } else {
+            Extender.extend_by_command(0);
+        }
 
         // Lift Controls TODO: Controls for Joysticks
         if (gamepad2.right_stick_y < -.1 || gamepad2.right_stick_y > .1) {
@@ -81,16 +86,19 @@ public class Teleop extends Controls {
 
         //Tower Flap Controls
         if (tower_right_bumper(false)) {
-            Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
             Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_KICK);
+        } else {
             Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
+        }
+
+        if (tower_right_bumper(false)) {
+            Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
         } else if (tower_left_bumper(false)) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
         } else if (tower_y(false)) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
         } else if (tower_a(false) || tower_b(false)) {
             Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
-            Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
         }
 
         // Set Motor Powers and Servos to Their Commands
@@ -105,14 +113,18 @@ public class Teleop extends Controls {
             telemetry.addData("Base Left Power: ", Subsystem.robot.left_drive.getPower());
             telemetry.addData("Collector Power: ", Subsystem.robot.collect.getPower());
             telemetry.addData("Lift Power: ", Subsystem.robot.right_lift.getPower());
-            telemetry.addData("Tower Right Rotate: ", Subsystem.robot.score_right_rotate.getPower());
-            telemetry.addData("Tower Left Rotate: ", Scorer.robot.score_left_rotate.getPower());
+            telemetry.addData("Tower Right Rotate Power: ", Subsystem.robot.score_right_rotate.getPower());
+            telemetry.addData("Tower Left Rotate Power: ", Scorer.robot.score_left_rotate.getPower());
+            telemetry.addData("Right Extend Power: ", Subsystem.robot.right_extend.getPower());
+            telemetry.addData("Left Extend Power: ", Subsystem.robot.left_extend.getPower());
             telemetry.addData("Positions: ", "");
             telemetry.addData("Base Right Position: ", Subsystem.robot.right_drive.getCurrentPosition());
             telemetry.addData("Base Left Position: ", Subsystem.robot.left_drive.getCurrentPosition());
             telemetry.addData("Lift Position: ", Subsystem.robot.right_lift.getCurrentPosition());
             telemetry.addData("Collector Rotate Target Position: ", Subsystem.robot.collector_rotate.getPosition());
             telemetry.addData("Flap Target Position: ", Subsystem.robot.score_flap.getPosition());
+            telemetry.addData("Right Extend Position: ", Subsystem.robot.right_extend.getCurrentPosition());
+            telemetry.addData("Left Extend Position: ", Subsystem.robot.left_extend.getCurrentPosition());
             telemetry.update();
         } else {
             // Telemetry Update to Inform Drivers That the Program is Running and how to Access Telemetry

@@ -11,13 +11,13 @@ public abstract class Extender extends Subsystem{
     public static void extend_by_command(double command) {
         // Define Commands
         extend_command = command;
-
-        // Limit the motor power near the end of travel
-        if (command > 0){
-            extend_command = Range.clip(command, 0, ((Presets.EXTEND_MAX_POSITION - robot.right_extend.getCurrentPosition())*0.005));
-        } else {
-            extend_command = Range.clip(command,((Presets.EXTEND_MIN_POSITION - robot.right_extend.getCurrentPosition())*0.005), 0);
-        }
+//
+//        // Limit the motor power near the end of travel
+//        if (command > 0){
+//            extend_command = Range.clip(command, 0, ((Presets.EXTEND_MAX_POSITION - robot.right_extend.getCurrentPosition())*0.005));
+//        } else {
+//            extend_command = Range.clip(command,((Presets.EXTEND_MIN_POSITION - robot.right_extend.getCurrentPosition())*0.005), 0);
+//        }
     }
 
     // Method for Extending to a Position

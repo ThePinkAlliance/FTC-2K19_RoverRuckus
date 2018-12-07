@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.PinkCode.Robot.Hardware;
-import org.firstinspires.PinkCode.Robot.Presets;
+import org.firstinspires.PinkCode.Calculations.Presets;
 import org.firstinspires.PinkCode.Subsystems.Base;
 import org.firstinspires.PinkCode.Subsystems.Collector;
 import org.firstinspires.PinkCode.Subsystems.Extender;
@@ -240,7 +240,7 @@ public class Auto extends OpMode{
                                 Extender.extend_to_position(Presets.EXTEND_SORT_POSITION);
                                 flag = true;
                             } else {
-                                Extender.extend_hold();
+                                Extender.extend_stop();
                             }
                         }
                         Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
