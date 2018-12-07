@@ -126,6 +126,7 @@ public class CameraOp extends OpMode {
     public void startCamera() {
 
 
+
         camera = openCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
 
         camera.setPreviewCallback(previewCallback);
@@ -134,11 +135,12 @@ public class CameraOp extends OpMode {
 
         width = parameters.getPreviewSize().width / ds;
         height = parameters.getPreviewSize().height / ds;
-        parameters.setPreviewSize(width, height);
+        parameters.setPreviewSize( width, height);
 
         camera.setParameters(parameters);
 
         data = parameters.flatten();
+
 
         if (preview == null) {
             ((FtcRobotControllerActivity) hardwareMap.appContext).initPreview(camera, this, previewCallback);
@@ -183,7 +185,12 @@ public class CameraOp extends OpMode {
 
     static public int gold(int pixel)
     {
-        return (red(pixel) + green(pixel));
+        if((red(pixel) + green(pixel) - blue(pixel) > 230)) {
+            return (red(pixel) + green(pixel));
+        }else
+        {
+            return (-1000);
+        }
     }
 
     static public int highestColor(int white, int gold) {

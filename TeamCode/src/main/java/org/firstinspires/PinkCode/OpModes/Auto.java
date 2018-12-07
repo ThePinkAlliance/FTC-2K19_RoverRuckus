@@ -12,6 +12,7 @@ import org.firstinspires.PinkCode.Subsystems.Extender;
 import org.firstinspires.PinkCode.Subsystems.Lift;
 import org.firstinspires.PinkCode.Subsystems.Scorer;
 import org.firstinspires.PinkCode.OpModes.Phone;
+import org.firstinspires.PinkCode.Subsystems.Subsystem;
 
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.center_initialize;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.center_stop;
@@ -58,12 +59,8 @@ public class Auto extends OpMode{
 
     public void init() {
         // Initialize Robot Hardware
-        Base.robot.init(hardwareMap);
+        Subsystem.robot.init(hardwareMap);
         robot.init(hardwareMap);
-        Collector.robot.init(hardwareMap);
-        Extender.robot.init(hardwareMap);
-        Lift.robot.init(hardwareMap);
-        Scorer.robot.init(hardwareMap);
         center_auto = center_initialize;
     }
     public void loop() {
@@ -94,6 +91,8 @@ public class Auto extends OpMode{
                 //releases hook holding robot up
                 robot.hook.setPosition(0.5);
                 Lift.lift_by_command(Presets.LIFT_RELEASE_BREAK);
+                Subsystem.set_motor_powers();
+                Subsystem.set_servo_positions();
                 // Wait for 3 seconds
                 if (runtime.seconds() - markedTime > 5) {
                     center_auto = lower_robot;
@@ -106,6 +105,8 @@ public class Auto extends OpMode{
                 telemetry.addData("Status: ", "Lowering Robot");
                 telemetry.update();
                 Lift.lift_to_position(Presets.LIFT_RELEASE_POSITION);
+                Subsystem.set_motor_powers();
+                Subsystem.set_servo_positions();
                 center_auto = sample;
                 break;
 
@@ -125,6 +126,8 @@ public class Auto extends OpMode{
                     Collector.collect();
                     Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
                     Collector.eject();
+                    Subsystem.set_motor_powers();
+                    Subsystem.set_servo_positions();
                     center_auto = score_and_set;
                     break;
                 } else if(right) {
@@ -140,6 +143,8 @@ public class Auto extends OpMode{
                     Collector.collect();
                     Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
                     Collector.eject();
+                    Subsystem.set_motor_powers();
+                    Subsystem.set_servo_positions();
                     center_auto = set;
                     break;
                 } else if(!middle) {
@@ -151,6 +156,8 @@ public class Auto extends OpMode{
                     Collector.collect();
                     Extender.extend_to_position(Presets.EXTEND_MID_GOLD_POSITION);
                     //Collect Cube
+                    Subsystem.set_motor_powers();
+                    Subsystem.set_servo_positions();
                     if (runtime.seconds() - markedTime > 3) {
                         center_auto = set;
                         markedTime = runtime.seconds();
@@ -168,6 +175,8 @@ public class Auto extends OpMode{
                 telemetry.update();
                 Collector.eject();
                 Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
+                Subsystem.set_motor_powers();
+                Subsystem.set_servo_positions();
                 if (runtime.seconds() - markedTime > 3) {
                     telemetry.addData("Status:", "Stop - Success");
                     telemetry.update();
@@ -196,6 +205,8 @@ public class Auto extends OpMode{
                 //Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
                 Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
                 center_auto = continuous_score;
+                Subsystem.set_motor_powers();
+                Subsystem.set_servo_positions();
                 break;
             //While Loop for continuous scoring
 
@@ -205,6 +216,8 @@ public class Auto extends OpMode{
                 telemetry.update();
                 while (Cycle) {
                     //if timer reaches 28 seconds, extend to crater
+                    Subsystem.set_motor_powers();
+                    Subsystem.set_servo_positions();
                     if (runtime.seconds() >= 28) {
                         //Extend to crater
                         Extender.extend_to_position(Presets.EXTEND_COLLECT_POSITION);
@@ -240,7 +253,7 @@ public class Auto extends OpMode{
                                 Extender.extend_to_position(Presets.EXTEND_SORT_POSITION);
                                 flag = true;
                             } else {
-                                Extender.extend_stop();
+
                             }
                         }
                         Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
