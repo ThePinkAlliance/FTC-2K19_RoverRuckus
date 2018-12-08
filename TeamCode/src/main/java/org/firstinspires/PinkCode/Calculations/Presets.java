@@ -16,6 +16,7 @@ public abstract class Presets {
     public static final double EXTEND_SORT_POSITION = 20; // Retracted Position for Transfer to Lift
     public static final double EXTEND_GOLD_POSITION = 1400; // Position to Knock Gold if on Side
     public static final double EXTEND_MID_GOLD_POSITION = 1300; // Position to Knock Gold if in Mid
+    public static final double EXTEND_RELEASE_COLLECTOR = 200; //Position to allow collector to fall out of stow position
     public static final double EXTEND_MIN_POSITION = 0; // Min position allowed for the extender
     public static final double EXTEND_MAX_POSITION = 1600; // Max position allowed for the extender
     static final double EXTEND_Kp = .01; // Kp for Extender PD
@@ -32,6 +33,7 @@ public abstract class Presets {
     static final double LIFT_Kd = 0.001; // Kd for Lift PD
     static final double LIFT_MIN_POWER = -1; // Most Power Sent While Lowering Lift
     static final double LIFT_MAX_POWER = 1; // Most Power Sent While Raising Lift
+    public static final double LIFT_HANG_POSITION = 1975;
 
     // Scorer Presets TODO: Confirm Scorer Presets
     public static final double SCORER_COLLECT = 0;
