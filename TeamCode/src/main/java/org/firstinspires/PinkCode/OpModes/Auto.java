@@ -30,6 +30,7 @@ import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.set;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.scan_middle;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.score_and_set;
 import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.sample;
+import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.unscore;
 
 
 // Class for the Autonomous Period of the Game Calling Methods from Subsystems in Sequence
@@ -204,7 +205,7 @@ public class Auto extends OpMode {
                 Collector.eject();
                 Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
                 if (runtime.seconds() - markedTime > 2) {
-                    center_auto = center_stop;
+                    center_auto = extender_retract;
                     break;
                 } else {
                     center_auto = set;
@@ -318,8 +319,10 @@ public class Auto extends OpMode {
                 Subsystem.set_servo_positions();
                 if(runtime.seconds() - markedTime > 2) {
                     center_auto = lift_raise;
+                    break;
                 }else {
                     center_auto = collector_sort;
+                    break;
                 }
             case lift_raise:
                 Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
@@ -327,6 +330,7 @@ public class Auto extends OpMode {
                 Subsystem.set_motor_powers();
                 Subsystem.set_servo_positions();
                 if(Subsystem.robot.right_lift.getCurrentPosition() >= Presets.LIFT_SCORE_POSITION) {
+                    markedTime = runtime.seconds();
                     center_auto = score;
                     break;
                 }else {
@@ -337,40 +341,36 @@ public class Auto extends OpMode {
                 Scorer.score_rotate_to_position(Presets.SCORER_SCORE);
                 Subsystem.set_motor_powers();
                 Subsystem.set_servo_positions();
-                Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
-                Subsystem.set_motor_powers();
-                Subsystem.set_servo_positions();
-                Extender.extend_to_position(Presets.EXTEND_SORT_POSITION);
-                Subsystem.set_motor_powers();
-                Subsystem.set_servo_positions();
-                Collector.rotate_to_position(Presets.COLLECTOR_SORT_POSITION);
-                Subsystem.set_motor_powers();
-                Subsystem.set_servo_positions();
-                Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
-                Subsystem.set_motor_powers();
-                Subsystem.set_servo_positions();
-                Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
-                Subsystem.set_motor_powers();
-                Subsystem.set_servo_positions();
-                Scorer.score_rotate_to_position(Presets.SCORER_SCORE);
-                Subsystem.set_motor_powers();
-                Subsystem.set_servo_positions();
-                Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
-                Subsystem.set_motor_powers();
-                Subsystem.set_servo_positions();
-                Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
-                Subsystem.set_motor_powers();
-                Subsystem.set_servo_positions();
-                Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_KICK);
-                Subsystem.set_motor_powers();
-                Subsystem.set_servo_positions();
-                Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
-                Subsystem.set_motor_powers();
-                Subsystem.set_servo_positions();
+                if(runtime.seconds() - markedTime > 1.5)
+                {
+                    Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
+                    Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_KICK);
+                    Subsystem.set_motor_powers();
+                    Subsystem.set_servo_positions();
+                    Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
+                    Subsystem.set_servo_positions();
+                    Subsystem.set_motor_powers();
+                    center_auto = unscore;
+                    break;
+                }
+                else {
+                   center_auto = score;
+                   break;
+                }
+
+            case unscore:
+                Scorer.score_rotate_to_position(Presets.SCORER_COLLECT);
                 Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
                 Subsystem.set_motor_powers();
                 Subsystem.set_servo_positions();
-                center_auto = extender_collect;
+                if(Subsystem.robot.right_lift.getCurrentPosition() <= Presets.LIFT_SORT_POSITION) {
+                    center_auto = extender_collect;
+                    break;
+                }
+                else{
+                    center_auto = unscore;
+                    break;
+                }
         }
     }
 }
