@@ -86,7 +86,13 @@ public class Teleop extends Controls {
         } else if(tower_y(false)) {
             Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
         } else if(tower_a(false)) {
+<<<<<<< HEAD
             Lift.lift_to_position(Presets.LIFT_CLEAR_POSITION);
+=======
+            Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
+        } else if (gamepad2.x) {
+            Lift.lift_to_position(Presets.LIFT_HANG_POSITION);
+>>>>>>> 0385351ef046579bb1d16c41b67bfabc7b96d692
         } else {
             Lift.lift_stop();
     }
