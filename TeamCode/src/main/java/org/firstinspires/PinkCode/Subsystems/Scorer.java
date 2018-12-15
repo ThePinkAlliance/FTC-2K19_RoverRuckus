@@ -7,7 +7,7 @@ public abstract class Scorer extends Subsystem {
         // Define Commands
         score_target_position = position;
         score_left_target_position = score_target_position;
-        score_right_target_position = -score_target_position;
+        score_right_target_position = 1-score_target_position;
     }
 
     // Method for Rotating the Scoring Bucket Using Commands

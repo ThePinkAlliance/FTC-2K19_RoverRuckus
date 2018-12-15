@@ -21,7 +21,7 @@ public class AutoLand extends OpMode {
 
     }
         public void loop(){
-        robot.collector_rotate.setPosition(Presets.COLLECTOR_STOW_POSITION);
+//        robot.collector_rotate.setPosition(Presets.COLLECTOR_STOW_POSITION);
         //Releases robot from lander
         telemetry.addData("Status","Releasing robot");
         telemetry.update();

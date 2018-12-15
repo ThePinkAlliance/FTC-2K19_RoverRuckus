@@ -27,4 +27,17 @@ public abstract class PD {
         // Return Value
         return lift_command;
     }
+
+    // Use a PD to Determine the Lift Motor Command
+    public static double get_collector_rotate_command (double error, double currentVel) {
+        // Define Variables
+        double collector_rotate_command;
+
+        // Calculate Motor Command
+        collector_rotate_command = (Presets.COLLECTOR_ROTATE_Kp * error) - (Presets.COLLECTOR_ROTATE_Kd * currentVel);
+        collector_rotate_command = Range.clip(collector_rotate_command, Presets.COLLECTOR_ROTATE_MIN_POWER, Presets.COLLECTOR_ROTATE_MAX_POWER);
+
+        // Return Value
+        return collector_rotate_command;
+    }
 }

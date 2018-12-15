@@ -2,6 +2,7 @@ package org.firstinspires.PinkCode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.PinkCode.Robot.Hardware;
@@ -29,6 +30,7 @@ import static org.firstinspires.PinkCode.OpModes.Auto.center_auto.sample;
 @Autonomous(name="Auto", group="Autonomous")
 public class Auto extends OpMode{
     // Set Up Center Auto Case Statement
+    static int phase = 0;
     public center_auto center_auto;
     public enum center_auto {
         center_stop,
@@ -61,218 +63,146 @@ public class Auto extends OpMode{
         // Initialize Robot Hardware
         Subsystem.robot.init(hardwareMap);
         robot.init(hardwareMap);
-        center_auto = center_initialize;
+        robot.hook.setPosition(Presets.HOOK_LATCH_POSITION);
+        Subsystem.robot.score_flap.setPosition(Presets.SCORER_FLAP_OPEN);
+        Subsystem.robot.score_kicker.setPosition(Presets.SCORER_KICKER_STOW);
+        Subsystem.robot.right_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Subsystem.robot.left_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        phase = 0;
     }
     public void loop() {
         // Center Auto Switch Statement
-        switch (center_auto) {
-            case center_stop:
-                // Does Nothing Until center_auto is set to center_initialize
-                telemetry.addData("Status: ", "Stopped");
-                telemetry.update();
+        telemetry.addData("Auto Phase: ", phase);
+        telemetry.update();
+
+        switch (phase) {
+            case 0: // Initialize
+                markedTime = runtime.milliseconds();
+                phase = 1;
                 break;
 
-            case center_initialize:
-                //Reset All Encoders
-                //Scan for gold cube
-                //Scans area for gold cube
-                telemetry.addData("Status", "Scanning for Cube");
-                telemetry.update();
-
-                //TODO: Scan for Gold Cube
-                center_auto = release_hook;
-                markedTime = runtime.seconds();
-                break;
-
-            case release_hook:
-                //Releases robot from lander
-                telemetry.addData("Status", "Releasing Hook");
-                telemetry.update();
-                //releases hook holding robot up
-                robot.hook.setPosition(0.5);
+            case 1: // Extend the collector arm out to release the head
+                Collector.collect_stop();
+                Collector.rotate_to_position(0);
+                Extender.extend_to_position(200);
                 Lift.lift_by_command(Presets.LIFT_RELEASE_BREAK);
-                Subsystem.set_motor_powers();
-                Subsystem.set_servo_positions();
-                // Wait for 3 seconds
-                if (runtime.seconds() - markedTime > 5) {
-                    center_auto = lower_robot;
-                } else {
-                    center_auto = release_hook;
+                Scorer.score_rotate_to_position(Presets.SCORER_COLLECT);
+                robot.hook.setPosition(0.5);
+                if ((runtime.milliseconds() - markedTime) > 500) {
+                    markedTime = runtime.milliseconds();
+                    phase = 2;
                 }
                 break;
 
-            case lower_robot:
-                telemetry.addData("Status: ", "Lowering Robot");
-                telemetry.update();
-                Lift.lift_to_position(Presets.LIFT_RELEASE_POSITION);
-                Subsystem.set_motor_powers();
-                Subsystem.set_servo_positions();
-                center_auto = sample;
-                break;
-
-
-
-            case sample:
-                if (left) {
-                    //If left area is gold cube
-                    telemetry.addData("Status", "Scanning for left");
-                    telemetry.update();
-                    //Turn to the left
-                    Base.drive_by_command(.25, 0);
-                    //Extend to gold cube
-                    Extender.extend_to_position(Presets.EXTEND_GOLD_POSITION);
-                    //Collect Gold Cube
-                    Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
-                    Collector.collect();
-                    Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
-                    Collector.eject();
-                    Subsystem.set_motor_powers();
-                    Subsystem.set_servo_positions();
-                    center_auto = score_and_set;
-                    break;
-                } else if(right) {
-                    //if right are is gold cube
-                    telemetry.addData("Status", "Scanning for right");
-                    telemetry.update();
-                    //Turn to the right
-                    Base.drive_by_command(0, .25);
-                    //Extend to gold cube
-                    Extender.extend_to_position(Presets.EXTEND_GOLD_POSITION);
-                    //Collect Gold Cube
-                    Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
-                    Collector.collect();
-                    Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
-                    Collector.eject();
-                    Subsystem.set_motor_powers();
-                    Subsystem.set_servo_positions();
-                    center_auto = set;
-                    break;
-                } else if(!middle) {
-                    //If gold cube is centered
-                    telemetry.addData("Status", "Scanning for middle");
-                    telemetry.update();
-                    //Extend to gold cube
-                    Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
-                    Collector.collect();
-                    Extender.extend_to_position(Presets.EXTEND_MID_GOLD_POSITION);
-                    //Collect Cube
-                    Subsystem.set_motor_powers();
-                    Subsystem.set_servo_positions();
-                    if (runtime.seconds() - markedTime > 3) {
-                        center_auto = set;
-                        markedTime = runtime.seconds();
-                        break;
-                    } else {
-                        center_auto = scan_middle;
-                    }
-                    break;
-                } else{
-                    center_auto = set;
-                    break;
-                }
-            case set:
-                telemetry.addData("Status", "Setting");
-                telemetry.update();
-                Collector.eject();
-                Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
-                Subsystem.set_motor_powers();
-                Subsystem.set_servo_positions();
-                if (runtime.seconds() - markedTime > 3) {
-                    telemetry.addData("Status:", "Stop - Success");
-                    telemetry.update();
-                    center_auto = center_stop;
-                }else {
-                    center_auto = set;
+            case 2: // Unlatch the tower hook so we can land
+                Collector.collect_stop();
+                Collector.rotate_to_position(0);
+                Extender.extend_stop();
+                Lift.lift_by_command(Presets.LIFT_RELEASE_BREAK);  // Pull a bit to free the hook
+                Scorer.score_rotate_to_position(Presets.SCORER_COLLECT);
+                robot.hook.setPosition(0.5);
+                // Wait for 2 seconds
+                if (runtime.milliseconds() - markedTime > 1000) {
+                    markedTime = runtime.milliseconds();
+                    phase = 4;
                 }
                 break;
-            case score_and_set:
-                //Scores material from sample and sets all motors to desired location
-                telemetry.addData("Status", "Scoring and Setting");
-                telemetry.update();
-                //Score cube and set collector to just outside the crater
-                Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
-                Extender.extend_to_position(Presets.EXTEND_SORT_POSITION);
-                Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
-                Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
-                Scorer.score_rotate_to_position(Presets.SCORER_SCORE);
-                Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
-                while (flag)
-                    if (robot.left_extend.getCurrentPosition() >= Presets.LIFT_SCORE_POSITION || robot.right_extend.getCurrentPosition() >= Presets.LIFT_SCORE_POSITION) {
-                        Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
-                        //Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_KICK);
-                        flag = false;
-                    }
-                //Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
+
+            case 4: // Raise the tower to land the robot and clear the hook
+                Collector.collect_stop();
+                Collector.rotate_to_position(-80);
+                Extender.extend_stop();
+                Lift.lift_by_command(Presets.LIFT_SCORE_POSITION);
+                Scorer.score_rotate_to_position(Presets.SCORER_COLLECT);
+                if (Subsystem.robot.right_lift.getCurrentPosition() > Presets.LIFT_CLEAR_POSITION){
+                    markedTime = runtime.milliseconds();
+                    Subsystem.robot.left_drive.setTargetPosition(300);
+                    Subsystem.robot.right_drive.setTargetPosition(300);
+                    Subsystem.robot.right_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Subsystem.robot.left_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    phase = 5;
+                }
+                break;
+
+            case 5: // Drive out a tiny bit to clear the lander
+                Collector.collect_stop();
+                Collector.rotate_to_position(-110);
+                Extender.extend_stop();
+                Lift.lift_stop();
+                Scorer.score_rotate_to_position(Presets.SCORER_COLLECT);
+                Base.drive_by_command(0.3, 0.3);
+                if (runtime.milliseconds() - markedTime > 2000) {
+                    phase = 6;
+                }
+                break;
+
+            case 6: // Turn towards the gold cube AND lower the collector bucket
+                Collector.collect_stop();
+                Collector.rotate_to_position(-110);
+                Extender.extend_stop();
                 Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
-                center_auto = continuous_score;
-                Subsystem.set_motor_powers();
-                Subsystem.set_servo_positions();
+                Scorer.score_rotate_to_position(Presets.SCORER_COLLECT);
+                Base.drive_stop();
+                // Change the target position here and wait for a couple of seconds
+                markedTime = runtime.milliseconds();
+                phase = 7;
                 break;
-            //While Loop for continuous scoring
 
-            case continuous_score:
-                //Continuously scores materials into lander
-                telemetry.addData("Status", "Continuous Scoring");
-                telemetry.update();
-                while (Cycle) {
-                    //if timer reaches 28 seconds, extend to crater
-                    Subsystem.set_motor_powers();
-                    Subsystem.set_servo_positions();
-                    if (runtime.seconds() >= 28) {
-                        //Extend to crater
-                        Extender.extend_to_position(Presets.EXTEND_COLLECT_POSITION);
-                        Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
-                        //End
-                        stop();
-                    }
-                    //if timer > 28s continuous scoring
-                    else {
-                        //collect game pieces
-                        while (!flag) {
-                            if (robot.left_lift.getCurrentPosition() <= Presets.LIFT_SCORE_POSITION && robot.right_lift.getCurrentPosition() <= Presets.LIFT_SCORE_POSITION) {
-                                Extender.extend_to_position(Presets.EXTEND_COLLECT_POSITION);
-                                flag = true;
-                            } else {
-                                Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
-                            }
-                        }
-                        //If statement to not allow collector to drop before inside crater.
-                        while (flag)
-                            if (robot.left_extend.getCurrentPosition() >= Presets.EXTEND_COLLECT_POSITION && robot.right_extend.getCurrentPosition() >= Presets.EXTEND_COLLECT_POSITION) {
-                                Collector.rotate_to_position(Presets.COLLECTOR_COLLECT_POSITION);
-                                Collector.collect();
-                                Collector.rotate_to_position(Presets.COLLECTOR_TRAVEL_POSITION);
-                                Collector.eject();
-                                flag = false;
-                            } else {
-                                Collector.collect_stop();
-                            }
-                        //move collector back, sort, and score
-                        while (!flag) {
-                            if (robot.left_lift.getCurrentPosition() <= Presets.LIFT_SORT_POSITION && robot.right_lift.getCurrentPosition() <= Presets.LIFT_SORT_POSITION) {
-                                Extender.extend_to_position(Presets.EXTEND_SORT_POSITION);
-                                flag = true;
-                            } else {
-
-                            }
-                        }
-                        Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_CLOSED);
-                        Lift.lift_to_position(Presets.LIFT_SCORE_POSITION);
-                        Scorer.score_rotate_to_position(Presets.SCORER_SCORE);
-                        if (markedTime - runtime.seconds() < 3000000) {
-                            markedTime = runtime.seconds();
-                            Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
-                            while (flag)
-                                if (robot.left_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION && robot.right_extend.getCurrentPosition() >= Presets.EXTEND_CRATER_POSITION) {
-                                    Scorer.score_flap_rotate_to_position(Presets.SCORER_FLAP_OPEN);
-                                    //Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_KICK);
-                                    flag = false;
-                                }
-                        }
-                        //Scorer.score_kicker_rotate_to_position(Presets.SCORER_KICKER_STOW);
-                        Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
-                    }
+            case 7:  // Collect the gold cube
+                Collector.collect();
+                Collector.rotate_to_position(-110);  // Stowed is 0, deployed is -130
+                Extender.extend_to_position(600);
+                Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
+                Scorer.score_rotate_to_position(Presets.SCORER_COLLECT);
+                if (runtime.milliseconds() - markedTime > 2000) {
+                    markedTime = runtime.milliseconds();
+                    phase = 8;
                 }
+                break;
+
+            case 8:  // Raise the collector bucket
+                Collector.collect();
+                Collector.rotate_to_position(-60);
+                Extender.extend_to_position(600);
+                Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
+                Scorer.score_rotate_to_position(Presets.SCORER_COLLECT);
+                if (runtime.milliseconds() - markedTime > 1000) {
+                    phase = 9;
+                }
+                break;
+
+            case 9:  // Turn back to the center
+                Collector.collect_stop();
+                Collector.rotate_to_position(-60);
+                Extender.extend_to_position(600);
+                Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
+                Scorer.score_rotate_to_position(Presets.SCORER_COLLECT);
+                if (runtime.milliseconds() - markedTime > 1000) {
+                    phase = 10;
+                }
+                break;
+
+            case 10:  // Extend the arm to enter the crater
+                Collector.collect_stop();
+                Collector.rotate_to_position(-60);
+                Extender.extend_to_position(Presets.EXTEND_CRATER_POSITION);
+                Lift.lift_to_position(Presets.LIFT_SORT_POSITION);
+                Scorer.score_rotate_to_position(Presets.SCORER_COLLECT);
+                if (runtime.milliseconds() - markedTime > 2000) {
+                    phase = 11;
+                }
+                break;
+
+            case 11:  // Lower the collector bucket to start teleop at zero = down
+                Collector.collect_stop();
+                Collector.rotate_to_position(0);  // Drop down so teleop starts here at zero
+                Extender.extend_stop();
+                Lift.lift_stop();
+                Scorer.score_rotate_to_position(Presets.SCORER_COLLECT);
+                break;
         }
+
+        Subsystem.set_motor_powers();
+        Subsystem.set_servo_positions();
     }
 }
