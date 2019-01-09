@@ -127,6 +127,7 @@ public class CameraOp extends OpMode {
 
 
 
+
         camera = openCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
 
         camera.setPreviewCallback(previewCallback);
@@ -185,8 +186,8 @@ public class CameraOp extends OpMode {
 
     static public int gold(int pixel)
     {
-        if((red(pixel) + green(pixel) - blue(pixel) > 230)) {
-            return (red(pixel) + green(pixel));
+        if((red(pixel) + green(pixel) + blue(pixel) > 1200)) {
+            return (1200);
         }else
         {
             return (-1000);
